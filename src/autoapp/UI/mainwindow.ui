@@ -202,6 +202,10 @@ color: rgb(238, 238, 236);</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>pushButtonExit</tabstop>
+  <tabstop>pushButtonSettings</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -763,6 +763,46 @@ color: rgb(238, 238, 236);</string>
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonResetToDefaults</tabstop>
+  <tabstop>pushButtonSave</tabstop>
+  <tabstop>radioButtonLeftHandDrive</tabstop>
+  <tabstop>radioButtonRightHandDrive</tabstop>
+  <tabstop>checkBoxShowClock</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>radioButton30FPS</tabstop>
+  <tabstop>radioButton60FPS</tabstop>
+  <tabstop>radioButton480p</tabstop>
+  <tabstop>radioButton720p</tabstop>
+  <tabstop>radioButton1080p</tabstop>
+  <tabstop>horizontalSliderScreenDPI</tabstop>
+  <tabstop>checkBoxEnableTouchscreen</tabstop>
+  <tabstop>listWidgetButtons</tabstop>
+  <tabstop>checkBoxPlayButton</tabstop>
+  <tabstop>checkBoxPauseButton</tabstop>
+  <tabstop>checkBoxTogglePlayButton</tabstop>
+  <tabstop>checkBoxNextTrackButton</tabstop>
+  <tabstop>checkBoxPreviousTrackButton</tabstop>
+  <tabstop>checkBoxHomeButton</tabstop>
+  <tabstop>checkBoxPhoneButton</tabstop>
+  <tabstop>checkBoxCallEndButton</tabstop>
+  <tabstop>checkBoxVoiceCommandButton</tabstop>
+  <tabstop>checkBoxLeftButton</tabstop>
+  <tabstop>checkBoxRightButton</tabstop>
+  <tabstop>checkBoxUpButton</tabstop>
+  <tabstop>checkBoxDownButton</tabstop>
+  <tabstop>checkBoxScrollWheelButton</tabstop>
+  <tabstop>checkBoxBackButton</tabstop>
+  <tabstop>checkBoxEnterButton</tabstop>
+  <tabstop>pushButtonSelectAll</tabstop>
+  <tabstop>pushButtonClearSelection</tabstop>
+  <tabstop>pushButtonShowBindings</tabstop>
+  <tabstop>radioButtonDisableBluetooth</tabstop>
+  <tabstop>radioButtonUseLocalBluetoothAdapter</tabstop>
+  <tabstop>radioButtonUseExternalBluetoothAdapter</tabstop>
+  <tabstop>lineEditExternalBluetoothAdapterAddress</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
