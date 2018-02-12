@@ -9,7 +9,7 @@ As a gift for all donators we offer free support for building and running of the
 For support of other platforms please contact us at f1xstudiopl@gmail.com
 
 ### Description
-OpenAuto is a headunit emulator application based on aasdk library and Qt libraries. Main goal is to run this application on the RaspberryPI 3 board computer smoothly.
+OpenAuto is an AndroidAuto(tm) headunit emulator based on aasdk library and Qt libraries. Main goal is to run this application on the RaspberryPI 3 board computer smoothly.
 
 [See demo video](https://www.youtube.com/watch?v=k9tKRqIkQs8)
 
