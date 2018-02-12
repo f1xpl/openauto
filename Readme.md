@@ -4,6 +4,10 @@
 ### Support project
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R4HXE5ESDR4U4)
 
+As a gift for all donators we offer free support for building and running of the OpenAuto project.
+
+For support of other platforms please contact us at f1xstudiopl@gmail.com
+
 ### Description
 OpenAuto is a headunit emulator application based on aasdk library and Qt libraries. Main goal is to run this application on the RaspberryPI 3 board computer smoothly.
 
