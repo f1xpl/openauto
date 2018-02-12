@@ -33,7 +33,7 @@ find_package(Qt5 COMPONENTS Multimedia MultimediaWidgets Bluetooth)
 find_package(Protobuf REQUIRED)
 
 if(RPI3_BUILD)
-    add_definitions(-DUSE_OMX -DOMX_SKIP64BIT)
+    add_definitions(-DUSE_OMX -DOMX_SKIP64BIT -DRASPBERRYPI3)
     set(BCM_HOST_LIBRARIES "/opt/vc/lib/libbcm_host.so")
     set(BCM_HOST_INCLUDE_DIRS "/opt/vc/include")
     set(ILCLIENT_INCLUDE_DIRS "/opt/vc/src/hello_pi/libs/ilclient")

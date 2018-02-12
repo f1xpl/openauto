@@ -49,7 +49,7 @@ USBMain::USBMain(libusb_context* context)
 int USBMain::exec(int argc, char* argv[])
 {
     QApplication qApplication(argc, argv);
-#ifdef RPI3_BUILD
+#ifdef RASPBERRYPI3
     qApplication.setOverrideCursor(Qt::BlankCursor);
 #endif
 
