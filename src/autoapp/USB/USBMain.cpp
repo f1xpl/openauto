@@ -49,7 +49,9 @@ USBMain::USBMain(libusb_context* context)
 int USBMain::exec(int argc, char* argv[])
 {
     QApplication qApplication(argc, argv);
+#ifdef RPI3_BUILD
     qApplication.setOverrideCursor(Qt::BlankCursor);
+#endif
 
     ui::MainWindow mainWindow;
     mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
