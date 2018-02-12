@@ -79,6 +79,7 @@ void QtVideoOutput::write(uint64_t, const aasdk::common::DataConstBuffer& buffer
 void QtVideoOutput::onStartPlayback()
 {
     videoWidget_->setFocus();
+    videoWidget_->setWindowFlags(Qt::WindowStaysOnTopHint);
     videoWidget_->setFullScreen(true);
     videoWidget_->show();
 
