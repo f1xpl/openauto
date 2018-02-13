@@ -45,6 +45,7 @@ public:
 private:
     using std::enable_shared_from_this<SensorService>::shared_from_this;
     void sendDrivingStatusUnrestricted();
+    void sendNightData();
 
     boost::asio::io_service::strand strand_;
     aasdk::channel::sensor::SensorServiceChannel::Pointer channel_;

@@ -61,7 +61,7 @@ void SensorService::fillFeatures(aasdk::proto::messages::ServiceDiscoveryRespons
     auto* sensorChannel = channelDescriptor->mutable_sensor_channel();
     sensorChannel->add_sensors()->set_type(aasdk::proto::enums::SensorType::DRIVING_STATUS);
     //sensorChannel->add_sensors()->set_type(aasdk::proto::enums::SensorType::LOCATION);
-    //sensorChannel->add_sensors()->set_type(aasdk::proto::enums::SensorType::NIGHT_DATA);
+    sensorChannel->add_sensors()->set_type(aasdk::proto::enums::SensorType::NIGHT_DATA);
 }
 
 void SensorService::onChannelOpenRequest(const aasdk::proto::messages::ChannelOpenRequest& request)
@@ -92,7 +92,12 @@ void SensorService::onSensorStartRequest(const aasdk::proto::messages::SensorSta
     if(request.sensor_type() == aasdk::proto::enums::SensorType::DRIVING_STATUS)
     {
         promise->then(std::bind(&SensorService::sendDrivingStatusUnrestricted, this->shared_from_this()),
-                     std::bind(&SensorService::onChannelError, this->shared_from_this(), std::placeholders::_1));
+                      std::bind(&SensorService::onChannelError, this->shared_from_this(), std::placeholders::_1));
+    }
+    else if(request.sensor_type() == aasdk::proto::enums::SensorType::NIGHT_DATA)
+    {
+        promise->then(std::bind(&SensorService::sendNightData, this->shared_from_this()),
+                      std::bind(&SensorService::onChannelError, this->shared_from_this(), std::placeholders::_1));
     }
     else
     {
@@ -107,6 +112,16 @@ void SensorService::sendDrivingStatusUnrestricted()
 {
     aasdk::proto::messages::SensorEventIndication indication;
     indication.add_driving_status()->set_status(aasdk::proto::enums::DrivingStatus::UNRESTRICTED);
+
+    auto promise = aasdk::channel::SendPromise::defer(strand_);
+    promise->then([]() {}, std::bind(&SensorService::onChannelError, this->shared_from_this(), std::placeholders::_1));
+    channel_->sendSensorEventIndication(indication, std::move(promise));
+}
+
+void SensorService::sendNightData()
+{
+    aasdk::proto::messages::SensorEventIndication indication;
+    indication.add_night_mode()->set_is_night(false);
 
     auto promise = aasdk::channel::SendPromise::defer(strand_);
     promise->then([]() {}, std::bind(&SensorService::onChannelError, this->shared_from_this(), std::placeholders::_1));
