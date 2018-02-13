@@ -16,6 +16,7 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QApplication>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include "ui_mainwindow.h"
 
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui_->setupUi(this);
     connect(ui_->pushButtonSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
     connect(ui_->pushButtonExit, &QPushButton::clicked, this, &MainWindow::exit);
+    connect(ui_->pushButtonToggleCursor, &QPushButton::clicked, this, &MainWindow::toggleCursor);
 }
 
 MainWindow::~MainWindow()

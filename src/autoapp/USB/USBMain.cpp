@@ -49,21 +49,26 @@ USBMain::USBMain(libusb_context* context)
 int USBMain::exec(int argc, char* argv[])
 {
     QApplication qApplication(argc, argv);
-#ifdef RASPBERRYPI3
-    qApplication.setOverrideCursor(Qt::BlankCursor);
-#endif
 
     ui::MainWindow mainWindow;
     mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
+
     ui::SettingsWindow settingsWindow(configuration_);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     QObject::connect(&mainWindow, &ui::MainWindow::exit, []() { std::exit(0); });
     QObject::connect(&mainWindow, &ui::MainWindow::openSettings, &settingsWindow, &ui::SettingsWindow::showFullScreen);
+
+    qApplication.setOverrideCursor(Qt::BlankCursor);
+    bool cursorVisible = false;
+    QObject::connect(&mainWindow, &ui::MainWindow::toggleCursor, [&cursorVisible, &qApplication]() {
+        cursorVisible = !cursorVisible;
+        qApplication.setOverrideCursor(cursorVisible ? Qt::ArrowCursor : Qt::BlankCursor);
+    });
+
     mainWindow.showFullScreen();
 
     boost::asio::io_service::work work(ioService_);
-
     this->startIOServiceWorkers();
     this->startUSBWorkers();
     usbApp_->start();
