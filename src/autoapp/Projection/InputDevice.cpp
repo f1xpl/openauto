@@ -162,7 +162,7 @@ bool InputDevice::handleKeyEvent(QEvent* event, QKeyEvent* key)
         break;
 
     default:
-        return false;
+        return true;
     }
 
     const auto& buttonCodes = this->getSupportedButtonCodes();
@@ -181,7 +181,7 @@ bool InputDevice::handleTouchEvent(QEvent* event)
 {
     if(!configuration_->getTouchscreenEnabled())
     {
-        return false;
+        return true;
     }
 
     aasdk::proto::enums::TouchAction::Enum type;
@@ -198,7 +198,7 @@ bool InputDevice::handleTouchEvent(QEvent* event)
         type = aasdk::proto::enums::TouchAction::DRAG;
         break;
     default:
-        return false;
+        return true;
     };
 
     QMouseEvent* mouse = static_cast<QMouseEvent*>(event);
