@@ -28,7 +28,7 @@ namespace autoapp
 namespace configuration
 {
 
-const std::string Configuration::cConfigFileName = "configuration.ini";
+const std::string Configuration::cConfigFileName = "openauto.ini";
 
 const std::string Configuration::cGeneralShowClockKey = "General.ShowClock";
 const std::string Configuration::cGeneralHandednessOfTrafficTypeKey = "General.HandednessOfTrafficType";
