@@ -42,7 +42,7 @@ color: rgb(238, 238, 236);</string>
     <string>Save</string>
    </property>
    <property name="autoDefault">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonCancel">
@@ -58,7 +58,7 @@ color: rgb(238, 238, 236);</string>
     <string>Cancel</string>
    </property>
    <property name="autoDefault">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="default">
     <bool>false</bool>
@@ -564,7 +564,7 @@ color: rgb(238, 238, 236);</string>
       <string>Select all</string>
      </property>
      <property name="autoDefault">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonClearSelection">
@@ -580,7 +580,7 @@ color: rgb(238, 238, 236);</string>
       <string>Clear selection</string>
      </property>
      <property name="autoDefault">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonShowBindings">
@@ -596,7 +596,7 @@ color: rgb(238, 238, 236);</string>
       <string>Show bindings</string>
      </property>
      <property name="autoDefault">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
@@ -759,7 +759,7 @@ color: rgb(238, 238, 236);</string>
     <string>Reset to defaults</string>
    </property>
    <property name="autoDefault">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

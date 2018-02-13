@@ -57,7 +57,7 @@ color: rgb(238, 238, 236);</string>
      <string>Settings</string>
     </property>
     <property name="autoDefault">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="default">
      <bool>false</bool>
@@ -76,7 +76,7 @@ color: rgb(238, 238, 236);</string>
      <string>Exit</string>
     </property>
     <property name="autoDefault">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
