@@ -104,7 +104,22 @@ bool OMXVideoOutput::init()
 
     OPENAUTO_LOG(info) << "[OMXVideoOutput] init, state: " << isActive_;
     ilclient_change_component_state(components_[VideoComponent::DECODER], OMX_StateExecuting);
-    return true;
+    
+    return this->setFullscreen();
+}
+
+bool OMXVideoOutput::setFullscreen()
+{
+    OMX_CONFIG_DISPLAYREGIONTYPE displayRegion;
+    displayRegion.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
+    displayRegion.nVersion.nVersion = OMX_VERSION;
+    displayRegion.nPortIndex = 90;
+    
+    displayRegion.set = static_cast<OMX_DISPLAYSETTYPE >(OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_NOASPECT);
+    displayRegion.fullscreen = OMX_TRUE;
+    displayRegion.noaspect = OMX_TRUE;
+    
+    return OMX_SetConfig(ilclient_get_handle(components_[VideoComponent::RENDERER]), OMX_IndexConfigDisplayRegion, &displayRegion) == OMX_ErrorNone;
 }
 
 void OMXVideoOutput::write(uint64_t timestamp, const aasdk::common::DataConstBuffer& buffer)
