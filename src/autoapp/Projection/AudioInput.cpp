@@ -136,10 +136,14 @@ void AudioInput::onStopRecording()
         readPromise_.reset();
     }
 
-    ioDevice_->reset();
-    ioDevice_->disconnect();
+    if(ioDevice_ != nullptr)
+    {
+        ioDevice_->reset();
+        ioDevice_->disconnect();
+        ioDevice_ = nullptr;
+    }
+
     audioInput_->stop();
-    ioDevice_ = nullptr;
 }
 
 void AudioInput::onReadyRead()
