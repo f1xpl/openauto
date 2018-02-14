@@ -8,6 +8,9 @@ As a gift for all donators we offer free support for building and running of the
 
 For support of other platforms please contact us at f1xstudiopl@gmail.com
 
+### Community
+[![Join the chat at https://gitter.im/publiclab/publiclab](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/openauto_androidauto/Lobby)
+
 ### Description
 OpenAuto is an AndroidAuto(tm) headunit emulator based on aasdk library and Qt libraries. Main goal is to run this application on the RaspberryPI 3 board computer smoothly.
 
