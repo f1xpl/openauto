@@ -91,6 +91,7 @@ void USBMain::startUSBWorkers()
     threadPool_.emplace_back(usbWorker);
     threadPool_.emplace_back(usbWorker);
     threadPool_.emplace_back(usbWorker);
+    threadPool_.emplace_back(usbWorker);
 }
 
 void USBMain::startIOServiceWorkers()
@@ -101,6 +102,7 @@ void USBMain::startIOServiceWorkers()
             ioService_.run();
         }
     };
+    threadPool_.emplace_back(ioServiceWorker);
     threadPool_.emplace_back(ioServiceWorker);
     threadPool_.emplace_back(ioServiceWorker);
     threadPool_.emplace_back(ioServiceWorker);
