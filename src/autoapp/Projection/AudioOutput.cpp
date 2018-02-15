@@ -49,6 +49,9 @@ void AudioOutput::createAudioOutput()
 {
     OPENAUTO_LOG(debug) << "[AudioOutput] create.";
     audioOutput_ = std::make_unique<QAudioOutput>(QAudioDeviceInfo::defaultOutputDevice(), audioFormat_);
+
+    // Default volume level (max) produces crackles
+    audioOutput_->setVolume(static_cast<qreal>(0.90));
 }
 
 bool AudioOutput::open()
