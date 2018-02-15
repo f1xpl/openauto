@@ -76,7 +76,13 @@ void AndroidAutoEntity::stop()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] stop.";
-        this->handleStop();
+
+        std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::stop, std::placeholders::_1));
+
+        messenger_->stop();
+        cryptor_->deinit();
+        transport_->stop();
+        eventHandler_ = nullptr;
     });
 }
 
@@ -89,7 +95,7 @@ void AndroidAutoEntity::onVersionResponse(uint16_t majorCode, uint16_t minorCode
     if(status == aasdk::proto::enums::VersionResponseStatus::MISMATCH)
     {
         OPENAUTO_LOG(error) << "[AndroidAutoEntity] version mismatch.";
-        eventHandler_->onAndroidAutoQuit();
+        this->triggerQuit();
     }
     else
     {
@@ -200,7 +206,7 @@ void AndroidAutoEntity::onShutdownRequest(const aasdk::proto::messages::Shutdown
     aasdk::proto::messages::ShutdownResponse response;
     auto promise = aasdk::channel::SendPromise::defer(strand_);
     promise->then([this, self = this->shared_from_this()]() {
-            eventHandler_->onAndroidAutoQuit();
+            this->triggerQuit();
         },
         std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
@@ -211,7 +217,7 @@ void AndroidAutoEntity::onShutdownRequest(const aasdk::proto::messages::Shutdown
 void AndroidAutoEntity::onShutdownResponse(const aasdk::proto::messages::ShutdownResponse&)
 {
     OPENAUTO_LOG(info) << "[AndroidAutoEntity] Shutdown response ";
-    eventHandler_->onAndroidAutoQuit();
+    this->triggerQuit();
 }
 
 void AndroidAutoEntity::onNavigationFocusRequest(const aasdk::proto::messages::NavigationFocusRequest& request)
@@ -230,17 +236,15 @@ void AndroidAutoEntity::onNavigationFocusRequest(const aasdk::proto::messages::N
 void AndroidAutoEntity::onChannelError(const aasdk::error::Error& e)
 {
     OPENAUTO_LOG(error) << "[AndroidAutoEntity] channel error: " << e.what();
-    eventHandler_->onAndroidAutoQuit();
+    this->triggerQuit();
 }
 
-void AndroidAutoEntity::handleStop()
+void AndroidAutoEntity::triggerQuit()
 {
-    std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::stop, std::placeholders::_1));
-
-    messenger_->stop();
-    cryptor_->deinit();
-    transport_->stop();
-    eventHandler_ = nullptr;
+    if(eventHandler_ != nullptr)
+    {
+        eventHandler_->onAndroidAutoQuit();
+    }
 }
 
 }
