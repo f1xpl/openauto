@@ -67,13 +67,13 @@ void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
     {
         try
         {
-            //std::this_thread::sleep_for(std::chrono::seconds(10));
             androidAutoEntity_ = androidAutoEntityFactory_.create(std::move(deviceHandle));
             androidAutoEntity_->start(*this);
         }
         catch(const aasdk::error::Error& error)
         {
             OPENAUTO_LOG(error) << "[USBApp] AndroidAutoEntity create error: " << error.what();
+            this->waitForDevice();
         }
     }
     else
