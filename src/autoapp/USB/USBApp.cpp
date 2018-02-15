@@ -73,6 +73,8 @@ void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
         catch(const aasdk::error::Error& error)
         {
             OPENAUTO_LOG(error) << "[USBApp] AndroidAutoEntity create error: " << error.what();
+
+            androidAutoEntity_.reset();
             this->waitForDevice();
         }
     }
