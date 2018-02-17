@@ -97,24 +97,23 @@ void AudioInput::stop()
 
 uint32_t AudioInput::getSampleSize() const
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
     return audioFormat_.sampleSize();
 }
 
 uint32_t AudioInput::getChannelCount() const
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
     return audioFormat_.channelCount();
 }
 
 uint32_t AudioInput::getSampleRate() const
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
     return audioFormat_.sampleRate();
 }
 
 void AudioInput::onStartRecording(StartPromise::Pointer promise)
 {
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
     ioDevice_ = audioInput_->start();
 
     if(ioDevice_ != nullptr)
@@ -130,6 +129,8 @@ void AudioInput::onStartRecording(StartPromise::Pointer promise)
 
 void AudioInput::onStopRecording()
 {
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
     if(readPromise_ != nullptr)
     {
         readPromise_->reject();
@@ -148,6 +149,8 @@ void AudioInput::onStopRecording()
 
 void AudioInput::onReadyRead()
 {
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
     if(readPromise_ == nullptr)
     {
         return;
