@@ -43,7 +43,6 @@ public:
     bool init() override;
     void write(uint64_t timestamp, const aasdk::common::DataConstBuffer& buffer) override;
     void stop() override;
-    bool isActive() const override;
 
 signals:
     void startPlayback();
@@ -58,7 +57,7 @@ private:
     SequentialBuffer videoBuffer_;
     std::unique_ptr<QVideoWidget> videoWidget_;
     std::unique_ptr<QMediaPlayer> mediaPlayer_;
-    mutable std::mutex mutex_;
+    std::mutex mutex_;
 };
 
 }

@@ -48,7 +48,6 @@ public:
     bool init() override;
     void write(uint64_t timestamp, const aasdk::common::DataConstBuffer& buffer) override;
     void stop() override;
-    bool isActive() const override;
 
 private:
     bool createComponents();
@@ -57,7 +56,7 @@ private:
     bool enablePortBuffers();
     bool setFullscreen();
 
-    mutable std::mutex mutex_;
+    std::mutex mutex_;
     bool isActive_;
     bool portSettingsChanged_;
     ILCLIENT_T* client_;

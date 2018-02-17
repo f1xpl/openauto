@@ -202,13 +202,6 @@ void OMXVideoOutput::stop()
     }
 }
 
-bool OMXVideoOutput::isActive() const
-{
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-    
-    return isActive_;
-}
-
 bool OMXVideoOutput::createComponents()
 {
     if(ilclient_create_component(client_, &components_[VideoComponent::DECODER], "video_decode", static_cast<ILCLIENT_CREATE_FLAGS_T>(ILCLIENT_DISABLE_ALL_PORTS | ILCLIENT_ENABLE_INPUT_BUFFERS)) != 0)
