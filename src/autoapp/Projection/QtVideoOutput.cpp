@@ -49,8 +49,6 @@ void QtVideoOutput::createVideoOutput()
 
 bool QtVideoOutput::open()
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-
     return videoBuffer_.open(QIODevice::ReadWrite);
 }
 
@@ -67,15 +65,11 @@ void QtVideoOutput::stop()
 
 void QtVideoOutput::write(uint64_t, const aasdk::common::DataConstBuffer& buffer)
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-
     videoBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
 }
 
 void QtVideoOutput::onStartPlayback()
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-
     videoWidget_->setAspectRatioMode(Qt::IgnoreAspectRatio);
     videoWidget_->setFocus();
     videoWidget_->setWindowFlags(Qt::WindowStaysOnTopHint);
@@ -89,8 +83,6 @@ void QtVideoOutput::onStartPlayback()
 
 void QtVideoOutput::onStopPlayback()
 {
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-
     videoWidget_->hide();
     mediaPlayer_->stop();
 }

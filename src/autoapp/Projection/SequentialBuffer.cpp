@@ -37,6 +37,13 @@ bool SequentialBuffer::isSequential() const
     return true;
 }
 
+bool SequentialBuffer::open(OpenMode mode)
+{
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
+    return QIODevice::open(mode);
+}
+
 qint64 SequentialBuffer::readData(char *data, qint64 maxlen)
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);

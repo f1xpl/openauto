@@ -44,6 +44,7 @@ public:
     bool reset() override;
     bool canReadLine() const override;
     qint64 bytesAvailable() const override;
+    bool open(OpenMode mode) override;
 
 protected:
     qint64 readData(char *data, qint64 maxlen) override;
