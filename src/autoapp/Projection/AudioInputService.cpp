@@ -50,11 +50,7 @@ void AudioInputService::stop()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         OPENAUTO_LOG(info) << "[AudioInputService] stop.";
-
-        if(audioInput_->isActive())
-        {
-            audioInput_->stop();
-        }
+        audioInput_->stop();
     });
 }
 
