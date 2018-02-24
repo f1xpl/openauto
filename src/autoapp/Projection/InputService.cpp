@@ -137,13 +137,11 @@ void InputService::onChannelError(const aasdk::error::Error& e)
 
 void InputService::onButtonEvent(const ButtonEvent& event)
 {
-    timespec tp;
-    clock_gettime(CLOCK_REALTIME, &tp);
-    auto timestamp = tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
+    auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
 
-    strand_.dispatch([this, self = this->shared_from_this(), event = std::move(event), timestamp]() {
+    strand_.dispatch([this, self = this->shared_from_this(), event = std::move(event), timestamp = std::move(timestamp)]() {
         aasdk::proto::messages::InputEventIndication inputEventIndication;
-        inputEventIndication.set_timestamp(timestamp);
+        inputEventIndication.set_timestamp(timestamp.count());
 
         if(event.code == aasdk::proto::enums::ButtonCode::SCROLL_WHEEL)
         {
@@ -168,13 +166,11 @@ void InputService::onButtonEvent(const ButtonEvent& event)
 
 void InputService::onTouchEvent(const TouchEvent& event)
 {
-    timespec tp;
-    clock_gettime(CLOCK_REALTIME, &tp);
-    auto timestamp = tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
+    auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
 
-    strand_.dispatch([this, self = this->shared_from_this(), event = std::move(event), timestamp]() {
+    strand_.dispatch([this, self = this->shared_from_this(), event = std::move(event), timestamp = std::move(timestamp)]() {
         aasdk::proto::messages::InputEventIndication inputEventIndication;
-        inputEventIndication.set_timestamp(timestamp);
+        inputEventIndication.set_timestamp(timestamp.count());
 
         auto touchEvent = inputEventIndication.mutable_touch_event();
         touchEvent->set_touch_action(event.type);

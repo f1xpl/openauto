@@ -177,11 +177,8 @@ void AudioInputService::onAudioInputDataReady(aasdk::common::Data data)
     sendPromise->then(std::bind(&AudioInputService::readAudioInput, this->shared_from_this()),
                      std::bind(&AudioInputService::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
-
-    timespec tp;
-    clock_gettime(CLOCK_REALTIME, &tp);
-    auto timestamp = tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
-    channel_->sendAVMediaWithTimestampIndication(timestamp, std::move(data), std::move(sendPromise));
+    auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
+    channel_->sendAVMediaWithTimestampIndication(timestamp.count(), std::move(data), std::move(sendPromise));
 }
 
 void AudioInputService::readAudioInput()
