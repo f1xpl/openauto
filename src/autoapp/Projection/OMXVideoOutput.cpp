@@ -114,8 +114,12 @@ bool OMXVideoOutput::setFullscreen()
     displayRegion.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
     displayRegion.nVersion.nVersion = OMX_VERSION;
     displayRegion.nPortIndex = 90;
-    
-    displayRegion.set = static_cast<OMX_DISPLAYSETTYPE >(OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_NOASPECT);
+
+    //EGL surface needs the OMX layer to be 2
+    //Otherwise the Qt UI will draw on top of it
+    displayRegion.layer = 2;
+
+    displayRegion.set = static_cast<OMX_DISPLAYSETTYPE >(OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_NOASPECT | OMX_DISPLAY_SET_LAYER);
     displayRegion.fullscreen = OMX_TRUE;
     displayRegion.noaspect = OMX_TRUE;
     
