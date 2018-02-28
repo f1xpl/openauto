@@ -31,6 +31,7 @@ find_package(Boost REQUIRED COMPONENTS system log OPTIONAL_COMPONENTS unit_test_
 find_package(libusb-1.0 REQUIRED)
 find_package(Qt5 COMPONENTS Multimedia MultimediaWidgets Bluetooth)
 find_package(Protobuf REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 if(RPI3_BUILD)
     add_definitions(-DUSE_OMX -DOMX_SKIP64BIT -DRASPBERRYPI3)
@@ -52,6 +53,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${AASDK_INCLUDE_DIRS}
                     ${BCM_HOST_INCLUDE_DIRS}
                     ${ILCLIENT_INCLUDE_DIRS}
+                    ${OPENSSL_INCLUDE_DIR}
                     ${include_directory})
 								
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
@@ -69,5 +71,6 @@ target_link_libraries(autoapp
                         ${PROTOBUF_LIBRARIES}
                         ${BCM_HOST_LIBRARIES}
                         ${ILCLIENT_LIBRARIES}
+                        ${OPENSSL_LIBRARIES}
                         ${AASDK_PROTO_LIBRARIES}
                         ${AASDK_LIBRARIES})
