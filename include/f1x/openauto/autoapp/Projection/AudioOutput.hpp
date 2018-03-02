@@ -42,23 +42,27 @@ public:
     void write(const aasdk::common::DataConstBuffer& buffer) override;
     void start() override;
     void stop() override;
+    void suspend() override;
     uint32_t getSampleSize() const override;
     uint32_t getChannelCount() const override;
     uint32_t getSampleRate() const override;
 
 signals:
     void startPlayback();
+    void suspendPlayback();
     void stopPlayback();
 
 protected slots:
     void createAudioOutput();
     void onStartPlayback();
+    void onSuspendPlayback();
     void onStopPlayback();
 
 private:
     QAudioFormat audioFormat_;
     SequentialBuffer audioBuffer_;
     std::unique_ptr<QAudioOutput> audioOutput_;
+    bool playbackStarted_;
 };
 
 }

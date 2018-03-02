@@ -30,6 +30,7 @@ namespace projection
 {
 
 AudioOutput::AudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
+    : playbackStarted_(false)
 {
     audioFormat_.setChannelCount(channelCount);
     audioFormat_.setSampleRate(sampleRate);
@@ -40,6 +41,7 @@ AudioOutput::AudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sa
 
     this->moveToThread(QApplication::instance()->thread());
     connect(this, &AudioOutput::startPlayback, this, &AudioOutput::onStartPlayback);
+    connect(this, &AudioOutput::suspendPlayback, this, &AudioOutput::onSuspendPlayback);
     connect(this, &AudioOutput::stopPlayback, this, &AudioOutput::onStopPlayback);
 
     QMetaObject::invokeMethod(this, "createAudioOutput", Qt::BlockingQueuedConnection);
@@ -74,6 +76,11 @@ void AudioOutput::stop()
     emit stopPlayback();
 }
 
+void AudioOutput::suspend()
+{
+    emit suspendPlayback();
+}
+
 uint32_t AudioOutput::getSampleSize() const
 {
     return audioFormat_.sampleSize();
@@ -91,12 +98,29 @@ uint32_t AudioOutput::getSampleRate() const
 
 void AudioOutput::onStartPlayback()
 {
-    audioOutput_->start(&audioBuffer_);
+    if(!playbackStarted_)
+    {
+        audioOutput_->start(&audioBuffer_);
+        playbackStarted_ = true;
+    }
+    else
+    {
+        audioOutput_->resume();
+    }
+}
+
+void AudioOutput::onSuspendPlayback()
+{
+    audioOutput_->suspend();
 }
 
 void AudioOutput::onStopPlayback()
 {
-    audioOutput_->suspend();
+    if(playbackStarted_)
+    {
+        audioOutput_->stop();
+        playbackStarted_ = false;
+    }
 }
 
 }

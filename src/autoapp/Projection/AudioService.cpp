@@ -142,7 +142,7 @@ void AudioService::onAVChannelStopIndication(const aasdk::proto::messages::AVCha
                        << ", channel: " << aasdk::messenger::channelIdToString(channel_->getId())
                        << ", session: " << session_;
     session_ = -1;
-    audioOutput_->stop();
+    audioOutput_->suspend();
     channel_->receive(this->shared_from_this());
 }
 
