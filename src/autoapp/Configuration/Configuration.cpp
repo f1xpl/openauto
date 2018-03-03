@@ -36,6 +36,7 @@ const std::string Configuration::cGeneralHandednessOfTrafficTypeKey = "General.H
 const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
+const std::string Configuration::cVideoOMXLayerIndexKey = "Video.OMXLayerIndex";
 
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
@@ -82,6 +83,8 @@ void Configuration::load()
                                                                                                            aasdk::proto::enums::VideoResolution::_480p));
         screenDPI_ = iniConfig.get<size_t>(cVideoScreenDPIKey, 140);
 
+        omxLayerIndex_ = iniConfig.get<int32_t>(cVideoOMXLayerIndexKey, 1);
+
         enableTouchscreen_ = iniConfig.get<bool>(cInputEnableTouchscreenKey, true);
         this->readButtonCodes(iniConfig);
 
@@ -105,6 +108,7 @@ void Configuration::reset()
     videoFPS_ = aasdk::proto::enums::VideoFPS::_60;
     videoResolution_ = aasdk::proto::enums::VideoResolution::_480p;
     screenDPI_ = 140;
+    omxLayerIndex_ = 1;
     enableTouchscreen_ = true;
     buttonCodes_.clear();
     bluetoothAdapterType_ = BluetoothAdapterType::NONE;
@@ -120,6 +124,7 @@ void Configuration::save()
     iniConfig.put<uint32_t>(cVideoFPSKey, static_cast<uint32_t>(videoFPS_));
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
     iniConfig.put<size_t>(cVideoScreenDPIKey, screenDPI_);
+    iniConfig.put<int32_t>(cVideoOMXLayerIndexKey, omxLayerIndex_);
 
     iniConfig.put<bool>(cInputEnableTouchscreenKey, enableTouchscreen_);
     this->writeButtonCodes(iniConfig);
@@ -177,6 +182,16 @@ size_t Configuration::getScreenDPI() const
 void Configuration::setScreenDPI(size_t value)
 {
     screenDPI_ = value;
+}
+
+void Configuration::setOMXLayerIndex(int32_t value)
+{
+    omxLayerIndex_ = value;
+}
+
+int32_t Configuration::getOMXLayerIndex() const
+{
+    return omxLayerIndex_;
 }
 
 bool Configuration::getTouchscreenEnabled() const

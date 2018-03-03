@@ -72,6 +72,7 @@ void SettingsWindow::onSave()
     }
 
     configuration_->setScreenDPI(static_cast<size_t>(ui_->horizontalSliderScreenDPI->value()));
+    configuration_->setOMXLayerIndex(ui_->spinBoxOmxLayerIndex->value());
     configuration_->setTouchscreenEnabled(ui_->checkBoxEnableTouchscreen->isChecked());
     this->saveButtonCheckBoxes();
 
@@ -124,6 +125,7 @@ void SettingsWindow::load()
     ui_->radioButton720p->setChecked(configuration_->getVideoResolution() == aasdk::proto::enums::VideoResolution::_720p);
     ui_->radioButton1080p->setChecked(configuration_->getVideoResolution() == aasdk::proto::enums::VideoResolution::_1080p);
     ui_->horizontalSliderScreenDPI->setValue(static_cast<int>(configuration_->getScreenDPI()));
+    ui_->spinBoxOmxLayerIndex->setValue(configuration_->getOMXLayerIndex());
 
     ui_->checkBoxEnableTouchscreen->setChecked(configuration_->getTouchscreenEnabled());
     this->loadButtonCheckBoxes();

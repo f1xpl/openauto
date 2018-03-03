@@ -54,7 +54,7 @@ private:
     bool initClock();
     bool setupTunnels();
     bool enablePortBuffers();
-    bool setFullscreen();
+    bool setupDisplayRegion();
 
     std::mutex mutex_;
     bool isActive_;

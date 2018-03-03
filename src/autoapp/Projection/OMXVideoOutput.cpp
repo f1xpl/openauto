@@ -105,24 +105,20 @@ bool OMXVideoOutput::init()
     OPENAUTO_LOG(info) << "[OMXVideoOutput] init, state: " << isActive_;
     ilclient_change_component_state(components_[VideoComponent::DECODER], OMX_StateExecuting);
     
-    return this->setFullscreen();
+    return this->setupDisplayRegion();
 }
 
-bool OMXVideoOutput::setFullscreen()
+bool OMXVideoOutput::setupDisplayRegion()
 {
     OMX_CONFIG_DISPLAYREGIONTYPE displayRegion;
     displayRegion.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
     displayRegion.nVersion.nVersion = OMX_VERSION;
     displayRegion.nPortIndex = 90;
-
-    //EGL surface needs the OMX layer to be 2
-    //Otherwise the Qt UI will draw on top of it
-    displayRegion.layer = 2;
-
-    displayRegion.set = static_cast<OMX_DISPLAYSETTYPE >(OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_NOASPECT | OMX_DISPLAY_SET_LAYER);
+    displayRegion.layer = static_cast<OMX_S32>(configuration_->getOMXLayerIndex());
     displayRegion.fullscreen = OMX_TRUE;
     displayRegion.noaspect = OMX_TRUE;
-    
+    displayRegion.set = static_cast<OMX_DISPLAYSETTYPE >(OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_NOASPECT | OMX_DISPLAY_SET_LAYER);    
+
     return OMX_SetConfig(ilclient_get_handle(components_[VideoComponent::RENDERER]), OMX_IndexConfigDisplayRegion, &displayRegion) == OMX_ErrorNone;
 }
 

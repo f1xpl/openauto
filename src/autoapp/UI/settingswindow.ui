@@ -141,9 +141,9 @@ color: rgb(238, 238, 236);</string>
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>130</y>
+       <y>80</y>
        <width>621</width>
-       <height>211</height>
+       <height>141</height>
       </rect>
      </property>
      <property name="title">
@@ -154,7 +154,7 @@ color: rgb(238, 238, 236);</string>
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>112</width>
+        <width>71</width>
         <height>23</height>
        </rect>
       </property>
@@ -165,9 +165,9 @@ color: rgb(238, 238, 236);</string>
      <widget class="QRadioButton" name="radioButton720p">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>112</width>
+        <x>120</x>
+        <y>30</y>
+        <width>71</width>
         <height>23</height>
        </rect>
       </property>
@@ -178,9 +178,9 @@ color: rgb(238, 238, 236);</string>
      <widget class="QRadioButton" name="radioButton1080p">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>110</y>
-        <width>112</width>
+        <x>230</x>
+        <y>30</y>
+        <width>81</width>
         <height>23</height>
        </rect>
       </property>
@@ -192,9 +192,9 @@ color: rgb(238, 238, 236);</string>
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>150</y>
-        <width>551</width>
-        <height>51</height>
+        <y>60</y>
+        <width>561</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="text">
@@ -203,14 +203,17 @@ color: rgb(238, 238, 236);</string>
       <property name="wordWrap">
        <bool>true</bool>
       </property>
+      <property name="margin">
+       <number>10</number>
+      </property>
      </widget>
      <widget class="QLabel" name="labelResolutionWarningIcon">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>150</y>
-        <width>41</width>
-        <height>51</height>
+        <x>20</x>
+        <y>60</y>
+        <width>31</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="text">
@@ -224,7 +227,7 @@ color: rgb(238, 238, 236);</string>
        <x>0</x>
        <y>10</y>
        <width>621</width>
-       <height>101</height>
+       <height>61</height>
       </rect>
      </property>
      <property name="title">
@@ -233,9 +236,9 @@ color: rgb(238, 238, 236);</string>
      <widget class="QRadioButton" name="radioButton60FPS">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>112</width>
+        <x>120</x>
+        <y>30</y>
+        <width>81</width>
         <height>23</height>
        </rect>
       </property>
@@ -248,7 +251,7 @@ color: rgb(238, 238, 236);</string>
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>112</width>
+        <width>81</width>
         <height>23</height>
        </rect>
       </property>
@@ -267,7 +270,7 @@ color: rgb(238, 238, 236);</string>
       </rect>
      </property>
      <property name="maximum">
-      <number>999</number>
+      <number>400</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -296,8 +299,70 @@ color: rgb(238, 238, 236);</string>
       </rect>
      </property>
      <property name="text">
-      <string>999</string>
+      <string>400</string>
      </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>230</y>
+       <width>621</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>OMX Layer index</string>
+     </property>
+     <widget class="QLabel" name="labelOmxLayerIndex">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Layer index:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelBluetoothAddressFormatInfo_2">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>80</y>
+        <width>311</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;OMX Layer is used only in case of OMX video output.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelBluetoothAddressFormatInfoIcon_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>80</y>
+        <width>21</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/ico_info.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBoxOmxLayerIndex">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>30</y>
+        <width>71</width>
+        <height>41</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tabInput">

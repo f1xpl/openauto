@@ -57,6 +57,8 @@ public:
     virtual void setVideoResolution(aasdk::proto::enums::VideoResolution::Enum value) = 0;
     virtual size_t getScreenDPI() const = 0;
     virtual void setScreenDPI(size_t value) = 0;
+    virtual void setOMXLayerIndex(int32_t value) = 0;
+    virtual int32_t getOMXLayerIndex() const = 0;
 
     virtual bool getTouchscreenEnabled() const = 0;
     virtual void setTouchscreenEnabled(bool value) = 0;
