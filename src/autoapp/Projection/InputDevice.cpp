@@ -133,14 +133,17 @@ bool InputDevice::handleKeyEvent(QEvent* event, QKeyEvent* key)
         buttonCode = aasdk::proto::enums::ButtonCode::PAUSE;
         break;
 
+    case Qt::Key_MediaPrevious:
     case Qt::Key_V:
         buttonCode = aasdk::proto::enums::ButtonCode::PREV;
         break;
 
+    case Qt::Key_MediaPlay:
     case Qt::Key_B:
         buttonCode = aasdk::proto::enums::ButtonCode::TOGGLE_PLAY;
         break;
 
+    case Qt::Key_MediaNext:
     case Qt::Key_N:
         buttonCode = aasdk::proto::enums::ButtonCode::NEXT;
         break;
