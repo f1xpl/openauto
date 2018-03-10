@@ -62,18 +62,22 @@ ServiceList ServiceFactory::create(aasdk::messenger::IMessenger::Pointer messeng
     IAudioInput::Pointer audioInput(new AudioInput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
     serviceList.emplace_back(std::make_shared<AudioInputService>(ioService_, messenger, std::move(audioInput)));
 
-    IAudioOutput::Pointer mediaAudioOutput(new AudioOutput(2, 16, 48000), std::bind(&QObject::deleteLater, std::placeholders::_1));
-    serviceList.emplace_back(std::make_shared<MediaAudioService>(ioService_, messenger, std::move(mediaAudioOutput)));
-
-    IAudioOutput::Pointer speechAudioOutput(new AudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
-    serviceList.emplace_back(std::make_shared<SpeechAudioService>(ioService_, messenger, std::move(speechAudioOutput)));
-
     IAudioOutput::Pointer systemAudioOutput(new AudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
     serviceList.emplace_back(std::make_shared<SystemAudioService>(ioService_, messenger, std::move(systemAudioOutput)));
 
+    if (!configuration_->audioAvoidInterference()) {
+        IAudioOutput::Pointer mediaAudioOutput(new AudioOutput(2, 16, 48000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+        serviceList.emplace_back(std::make_shared<MediaAudioService>(ioService_, messenger, std::move(mediaAudioOutput)));
+
+        IAudioOutput::Pointer speechAudioOutput(new AudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+        serviceList.emplace_back(std::make_shared<SpeechAudioService>(ioService_, messenger, std::move(speechAudioOutput)));
+    }
+
     serviceList.emplace_back(std::make_shared<SensorService>(ioService_, messenger));
     serviceList.emplace_back(this->createVideoService(messenger));
+
     serviceList.emplace_back(this->createBluetoothService(messenger));
+
     serviceList.emplace_back(this->createInputService(messenger));
 
     return serviceList;

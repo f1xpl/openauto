@@ -33,6 +33,8 @@ const std::string Configuration::cConfigFileName = "openauto.ini";
 const std::string Configuration::cGeneralShowClockKey = "General.ShowClock";
 const std::string Configuration::cGeneralHandednessOfTrafficTypeKey = "General.HandednessOfTrafficType";
 
+const std::string Configuration::cAudioAvoidInterferenceKey = "Audio.AvoidInterference";
+
 const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
@@ -76,6 +78,8 @@ void Configuration::load()
                                                                                                 static_cast<uint32_t>(HandednessOfTrafficType::LEFT_HAND_DRIVE)));
         showClock_ = iniConfig.get<bool>(cGeneralShowClockKey, true);
 
+        audioAvoidInterference_ = iniConfig.get<bool>(cAudioAvoidInterferenceKey, false);
+
         videoFPS_ = static_cast<aasdk::proto::enums::VideoFPS::Enum>(iniConfig.get<uint32_t>(cVideoFPSKey,
                                                                                              aasdk::proto::enums::VideoFPS::_60));
 
@@ -105,6 +109,7 @@ void Configuration::reset()
 {
     handednessOfTrafficType_ = HandednessOfTrafficType::LEFT_HAND_DRIVE;
     showClock_ = true;
+    audioAvoidInterference_ = false;
     videoFPS_ = aasdk::proto::enums::VideoFPS::_60;
     videoResolution_ = aasdk::proto::enums::VideoResolution::_480p;
     screenDPI_ = 140;
@@ -120,6 +125,7 @@ void Configuration::save()
     boost::property_tree::ptree iniConfig;
     iniConfig.put<uint32_t>(cGeneralHandednessOfTrafficTypeKey, static_cast<uint32_t>(handednessOfTrafficType_));
     iniConfig.put<bool>(cGeneralShowClockKey, showClock_);
+    iniConfig.put<bool>(cAudioAvoidInterferenceKey, audioAvoidInterference_);
 
     iniConfig.put<uint32_t>(cVideoFPSKey, static_cast<uint32_t>(videoFPS_));
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
@@ -152,6 +158,16 @@ void Configuration::showClock(bool value)
 bool Configuration::showClock() const
 {
     return showClock_;
+}
+
+void Configuration::audioAvoidInterference(bool value)
+{
+    audioAvoidInterference_ = value;
+}
+
+bool Configuration::audioAvoidInterference() const
+{
+    return audioAvoidInterference_;
 }
 
 aasdk::proto::enums::VideoFPS::Enum Configuration::getVideoFPS() const

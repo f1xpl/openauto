@@ -43,6 +43,8 @@ public:
     HandednessOfTrafficType getHandednessOfTrafficType() const override;
     void showClock(bool value) override;
     bool showClock() const override;
+    void audioAvoidInterference(bool value) override;
+    bool audioAvoidInterference() const override;
 
     aasdk::proto::enums::VideoFPS::Enum getVideoFPS() const override;
     void setVideoFPS(aasdk::proto::enums::VideoFPS::Enum value) override;
@@ -70,6 +72,7 @@ private:
 
     HandednessOfTrafficType handednessOfTrafficType_;
     bool showClock_;
+    bool audioAvoidInterference_;
     aasdk::proto::enums::VideoFPS::Enum videoFPS_;
     aasdk::proto::enums::VideoResolution::Enum videoResolution_;
     size_t screenDPI_;
@@ -82,6 +85,7 @@ private:
     static const std::string cConfigFileName;
 
     static const std::string cGeneralShowClockKey;
+    static const std::string cAudioAvoidInterferenceKey;
     static const std::string cGeneralHandednessOfTrafficTypeKey;
 
     static const std::string cVideoFPSKey;
