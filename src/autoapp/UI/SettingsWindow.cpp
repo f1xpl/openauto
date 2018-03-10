@@ -56,6 +56,7 @@ void SettingsWindow::onSave()
 {
     configuration_->setHandednessOfTrafficType(ui_->radioButtonLeftHandDrive->isChecked() ? configuration::HandednessOfTrafficType::LEFT_HAND_DRIVE : configuration::HandednessOfTrafficType::RIGHT_HAND_DRIVE);
     configuration_->showClock(ui_->checkBoxShowClock->isChecked());
+    configuration_->audioAvoidInterference(ui_->checkBoxAudioAvoidInterference->isChecked());
     configuration_->setVideoFPS(ui_->radioButton30FPS->isChecked() ? aasdk::proto::enums::VideoFPS::_30 : aasdk::proto::enums::VideoFPS::_60);
 
     if(ui_->radioButton480p->isChecked())
@@ -117,6 +118,7 @@ void SettingsWindow::load()
     ui_->radioButtonLeftHandDrive->setChecked(configuration_->getHandednessOfTrafficType() == configuration::HandednessOfTrafficType::LEFT_HAND_DRIVE);
     ui_->radioButtonRightHandDrive->setChecked(configuration_->getHandednessOfTrafficType() == configuration::HandednessOfTrafficType::RIGHT_HAND_DRIVE);
     ui_->checkBoxShowClock->setChecked(configuration_->showClock());
+    ui_->checkBoxAudioAvoidInterference->setChecked(configuration_->audioAvoidInterference());
 
     ui_->radioButton30FPS->setChecked(configuration_->getVideoFPS() == aasdk::proto::enums::VideoFPS::_30);
     ui_->radioButton60FPS->setChecked(configuration_->getVideoFPS() == aasdk::proto::enums::VideoFPS::_60);

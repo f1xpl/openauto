@@ -132,6 +132,19 @@ color: rgb(238, 238, 236);</string>
       <string>Show clock</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="checkBoxAudioAvoidInterference">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>601</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>[Experimental] Avoid taking over the phone's normal audio path</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabVideo">
     <attribute name="title">

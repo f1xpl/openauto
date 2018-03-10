@@ -50,6 +50,8 @@ public:
     virtual HandednessOfTrafficType getHandednessOfTrafficType() const = 0;
     virtual void showClock(bool value) = 0;
     virtual bool showClock() const = 0;
+    virtual void audioAvoidInterference(bool value) = 0;
+    virtual bool audioAvoidInterference() const = 0;
 
     virtual aasdk::proto::enums::VideoFPS::Enum getVideoFPS() const = 0;
     virtual void setVideoFPS(aasdk::proto::enums::VideoFPS::Enum value) = 0;
