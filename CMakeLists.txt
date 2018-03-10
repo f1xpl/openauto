@@ -31,6 +31,11 @@ find_package(Boost REQUIRED COMPONENTS system log OPTIONAL_COMPONENTS unit_test_
 find_package(libusb-1.0 REQUIRED)
 find_package(Qt5 COMPONENTS Multimedia MultimediaWidgets Bluetooth)
 find_package(Protobuf REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+if(WIN32)
+    set(WINSOCK2_LIBRARIES "ws2_32")
+endif(WIN32)
 
 if(RPI3_BUILD)
     add_definitions(-DUSE_OMX -DOMX_SKIP64BIT -DRASPBERRYPI3)
@@ -48,6 +53,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${Boost_INCLUDE_DIRS}
                     ${LIBUSB_1_INCLUDE_DIRS}
                     ${PROTOBUF_INCLUDE_DIR}
+                    ${OPENSSL_INCLUDE_DIR}
                     ${AASDK_PROTO_INCLUDE_DIRS}
                     ${AASDK_INCLUDE_DIRS}
                     ${BCM_HOST_INCLUDE_DIRS}
@@ -60,6 +66,7 @@ set(autoapp_sources_directory ${sources_directory}/autoapp)
 file(GLOB_RECURSE source_files ${autoapp_sources_directory}/*.ui ${autoapp_sources_directory}/*.cpp ${include_directory}/*.hpp ${resources_directory}/*.qrc)
 
 add_executable(autoapp ${source_files})
+
 target_link_libraries(autoapp
                         ${Boost_LIBRARIES}
                         ${Qt5Multimedia_LIBRARIES}
@@ -69,5 +76,6 @@ target_link_libraries(autoapp
                         ${PROTOBUF_LIBRARIES}
                         ${BCM_HOST_LIBRARIES}
                         ${ILCLIENT_LIBRARIES}
+                        ${WINSOCK2_LIBRARIES}
                         ${AASDK_PROTO_LIBRARIES}
                         ${AASDK_LIBRARIES})
