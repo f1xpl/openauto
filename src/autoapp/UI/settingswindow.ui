@@ -302,7 +302,7 @@ color: rgb(238, 238, 236);</string>
       <string>400</string>
      </property>
     </widget>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBoxOmxLayerIndex">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -361,6 +361,76 @@ color: rgb(238, 238, 236);</string>
         <width>71</width>
         <height>41</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabAudio">
+    <attribute name="title">
+     <string>Audio</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBoxAudioChannels">
+     <property name="geometry">
+      <rect>
+       <x>-1</x>
+       <y>10</y>
+       <width>621</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Audio channels</string>
+     </property>
+     <widget class="QCheckBox" name="checkBoxMusicChannel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>131</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Music channel</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxSpeechChannel">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>30</y>
+        <width>131</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Speech channel</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelAudioChannelDescription">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>70</y>
+        <width>511</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Disable audio channel if you need custom audio routing e.g. via A2DP or AUX.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelAudioChannelDescriptionIcon">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>70</y>
+        <width>21</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/ico_info.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -832,16 +902,19 @@ color: rgb(238, 238, 236);</string>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonResetToDefaults</tabstop>
   <tabstop>pushButtonSave</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>radioButtonLeftHandDrive</tabstop>
   <tabstop>radioButtonRightHandDrive</tabstop>
   <tabstop>checkBoxShowClock</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>radioButton30FPS</tabstop>
   <tabstop>radioButton60FPS</tabstop>
   <tabstop>radioButton480p</tabstop>
   <tabstop>radioButton720p</tabstop>
   <tabstop>radioButton1080p</tabstop>
+  <tabstop>spinBoxOmxLayerIndex</tabstop>
   <tabstop>horizontalSliderScreenDPI</tabstop>
+  <tabstop>checkBoxMusicChannel</tabstop>
+  <tabstop>checkBoxSpeechChannel</tabstop>
   <tabstop>checkBoxEnableTouchscreen</tabstop>
   <tabstop>listWidgetButtons</tabstop>
   <tabstop>checkBoxPlayButton</tabstop>
