@@ -38,6 +38,9 @@ const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
 const std::string Configuration::cVideoOMXLayerIndexKey = "Video.OMXLayerIndex";
 
+const std::string Configuration::cAudioMusicAudioChannelEnabled = "Audio.MusicAudioChannelEnabled";
+const std::string Configuration::cAudioSpeechAudioChannelEnabled = "Audio.SpeechAudioChannelEnabled";
+
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
 
@@ -92,6 +95,9 @@ void Configuration::load()
                                                                                           static_cast<uint32_t>(BluetoothAdapterType::NONE)));
 
         bluetoothRemoteAdapterAddress_ = iniConfig.get<std::string>(cBluetoothRemoteAdapterAddressKey, "");
+
+        musicAudioChannelEnabled_ = iniConfig.get<bool>(cAudioMusicAudioChannelEnabled, true);
+        speechAudiochannelEnabled_ = iniConfig.get<bool>(cAudioSpeechAudioChannelEnabled, true);
     }
     catch(const boost::property_tree::ini_parser_error& e)
     {
@@ -131,6 +137,9 @@ void Configuration::save()
 
     iniConfig.put<uint32_t>(cBluetoothAdapterTypeKey, static_cast<uint32_t>(bluetoothAdapterType_));
     iniConfig.put<std::string>(cBluetoothRemoteAdapterAddressKey, bluetoothRemoteAdapterAddress_);
+
+    iniConfig.put<bool>(cAudioMusicAudioChannelEnabled, musicAudioChannelEnabled_);
+    iniConfig.put<bool>(cAudioSpeechAudioChannelEnabled, speechAudiochannelEnabled_);
     boost::property_tree::ini_parser::write_ini(cConfigFileName, iniConfig);
 }
 
@@ -232,6 +241,26 @@ std::string Configuration::getBluetoothRemoteAdapterAddress() const
 void Configuration::setBluetoothRemoteAdapterAddress(const std::string& value)
 {
     bluetoothRemoteAdapterAddress_ = value;
+}
+
+bool Configuration::musicAudioChannelEnabled() const
+{
+    return musicAudioChannelEnabled_;
+}
+
+void Configuration::setMusicAudioChannelEnabled(bool value)
+{
+    musicAudioChannelEnabled_ = value;
+}
+
+bool Configuration::speechAudioChannelEnabled() const
+{
+    return speechAudiochannelEnabled_;
+}
+
+void Configuration::setSpeechAudioChannelEnabled(bool value)
+{
+    speechAudiochannelEnabled_ = value;
 }
 
 void Configuration::readButtonCodes(boost::property_tree::ptree& iniConfig)

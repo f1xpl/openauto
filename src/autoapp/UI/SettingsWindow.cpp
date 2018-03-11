@@ -91,6 +91,9 @@ void SettingsWindow::onSave()
 
     configuration_->setBluetoothRemoteAdapterAddress(ui_->lineEditExternalBluetoothAdapterAddress->text().toStdString());
 
+    configuration_->setMusicAudioChannelEnabled(ui_->checkBoxMusicAudioChannel->isChecked());
+    configuration_->setSpeechAudioChannelEnabled(ui_->checkBoxSpeechAudioChannel->isChecked());
+
     configuration_->save();
     this->close();
 }
@@ -135,6 +138,9 @@ void SettingsWindow::load()
     ui_->radioButtonUseExternalBluetoothAdapter->setChecked(configuration_->getBluetoothAdapterType() == configuration::BluetoothAdapterType::REMOTE);
     ui_->lineEditExternalBluetoothAdapterAddress->setEnabled(configuration_->getBluetoothAdapterType() == configuration::BluetoothAdapterType::REMOTE);
     ui_->lineEditExternalBluetoothAdapterAddress->setText(QString::fromStdString(configuration_->getBluetoothRemoteAdapterAddress()));
+
+    ui_->checkBoxMusicAudioChannel->setChecked(configuration_->musicAudioChannelEnabled());
+    ui_->checkBoxSpeechAudioChannel->setChecked(configuration_->speechAudioChannelEnabled());
 }
 
 void SettingsWindow::loadButtonCheckBoxes()

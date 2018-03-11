@@ -63,6 +63,11 @@ public:
     std::string getBluetoothRemoteAdapterAddress() const override;
     void setBluetoothRemoteAdapterAddress(const std::string& value) override;
 
+    bool musicAudioChannelEnabled() const override;
+    void setMusicAudioChannelEnabled(bool value) override;
+    bool speechAudioChannelEnabled() const override;
+    void setSpeechAudioChannelEnabled(bool value) override;
+
 private:
     void readButtonCodes(boost::property_tree::ptree& iniConfig);
     void insertButtonCode(boost::property_tree::ptree& iniConfig, const std::string& buttonCodeKey, aasdk::proto::enums::ButtonCode::Enum buttonCode);
@@ -78,6 +83,8 @@ private:
     ButtonCodes buttonCodes_;
     BluetoothAdapterType bluetoothAdapterType_;
     std::string bluetoothRemoteAdapterAddress_;
+    bool musicAudioChannelEnabled_;
+    bool speechAudiochannelEnabled_;
 
     static const std::string cConfigFileName;
 
@@ -88,6 +95,9 @@ private:
     static const std::string cVideoResolutionKey;
     static const std::string cVideoScreenDPIKey;
     static const std::string cVideoOMXLayerIndexKey;
+
+    static const std::string cAudioMusicAudioChannelEnabled;
+    static const std::string cAudioSpeechAudioChannelEnabled;
 
     static const std::string cBluetoothAdapterTypeKey;
     static const std::string cBluetoothRemoteAdapterAddressKey;

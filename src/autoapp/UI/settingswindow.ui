@@ -381,7 +381,7 @@ color: rgb(238, 238, 236);</string>
      <property name="title">
       <string>Audio channels</string>
      </property>
-     <widget class="QCheckBox" name="checkBoxMusicChannel">
+     <widget class="QCheckBox" name="checkBoxMusicAudioChannel">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -394,7 +394,7 @@ color: rgb(238, 238, 236);</string>
        <string>Music channel</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBoxSpeechChannel">
+     <widget class="QCheckBox" name="checkBoxSpeechAudioChannel">
       <property name="geometry">
        <rect>
         <x>160</x>
@@ -913,8 +913,8 @@ color: rgb(238, 238, 236);</string>
   <tabstop>radioButton1080p</tabstop>
   <tabstop>spinBoxOmxLayerIndex</tabstop>
   <tabstop>horizontalSliderScreenDPI</tabstop>
-  <tabstop>checkBoxMusicChannel</tabstop>
-  <tabstop>checkBoxSpeechChannel</tabstop>
+  <tabstop>checkBoxMusicAudioChannel</tabstop>
+  <tabstop>checkBoxSpeechAudioChannel</tabstop>
   <tabstop>checkBoxEnableTouchscreen</tabstop>
   <tabstop>listWidgetButtons</tabstop>
   <tabstop>checkBoxPlayButton</tabstop>
