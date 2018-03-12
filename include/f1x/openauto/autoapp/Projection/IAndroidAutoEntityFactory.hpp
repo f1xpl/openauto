@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <f1x/aasdk/TCP/ITCPEndpoint.hpp>
 #include <f1x/aasdk/USB/USBWrapper.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntity.hpp>
 
@@ -36,6 +37,7 @@ public:
     virtual ~IAndroidAutoEntityFactory() = default;
 
     virtual IAndroidAutoEntity::Pointer create(aasdk::usb::DeviceHandle deviceHandle) = 0;
+    virtual IAndroidAutoEntity::Pointer create(aasdk::tcp::ITCPEndpoint::Pointer tcpEndpoint) = 0;
 };
 
 }

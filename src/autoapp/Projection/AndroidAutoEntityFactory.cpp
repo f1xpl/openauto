@@ -19,6 +19,7 @@
 #include <f1x/aasdk/USB/AOAPDevice.hpp>
 #include <f1x/aasdk/Transport/SSLWrapper.hpp>
 #include <f1x/aasdk/Transport/USBTransport.hpp>
+#include <f1x/aasdk/Transport/TCPTransport.hpp>
 #include <f1x/aasdk/Messenger/Cryptor.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntity.hpp>
@@ -49,6 +50,17 @@ IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::usb::DeviceH
     auto aoapDevice(aasdk::usb::AOAPDevice::create(usbWrapper_, ioService_, deviceHandle));
     auto transport(std::make_shared<aasdk::transport::USBTransport>(ioService_, aoapDevice));
 
+    return create(std::move(transport));
+}
+
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::tcp::ITCPEndpoint::Pointer tcpEndpoint)
+{
+    auto transport(std::make_shared<aasdk::transport::TCPTransport>(ioService_, std::move(tcpEndpoint)));
+    return create(std::move(transport));
+}
+
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::transport::ITransport::Pointer transport)
+{
     auto sslWrapper(std::make_shared<aasdk::transport::SSLWrapper>());
     auto cryptor(std::make_shared<aasdk::messenger::Cryptor>(std::move(sslWrapper)));
 
