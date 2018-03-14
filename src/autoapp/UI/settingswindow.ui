@@ -343,6 +343,9 @@ color: rgb(238, 238, 236);</string>
         <height>41</height>
        </rect>
       </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
      </widget>
      <widget class="QLabel" name="labelVideoMarginHeight">
       <property name="geometry">
@@ -365,6 +368,9 @@ color: rgb(238, 238, 236);</string>
         <width>71</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
       </property>
      </widget>
     </widget>
