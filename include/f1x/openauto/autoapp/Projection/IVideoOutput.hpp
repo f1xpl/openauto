@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include <QRect>
 #include <aasdk_proto/VideoFPSEnum.pb.h>
 #include <aasdk_proto/VideoResolutionEnum.pb.h>
 #include <f1x/aasdk/Common/Data.hpp>
@@ -47,6 +48,7 @@ public:
     virtual aasdk::proto::enums::VideoFPS::Enum getVideoFPS() const = 0;
     virtual aasdk::proto::enums::VideoResolution::Enum getVideoResolution() const = 0;
     virtual size_t getScreenDPI() const = 0;
+    virtual QRect getVideoMargins() const = 0;
 };
 
 }

@@ -37,6 +37,8 @@ const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
 const std::string Configuration::cVideoOMXLayerIndexKey = "Video.OMXLayerIndex";
+const std::string Configuration::cVideoMarginWidth = "Video.MarginWidth";
+const std::string Configuration::cVideoMarginHeight = "Video.MarginHeight";
 
 const std::string Configuration::cAudioMusicAudioChannelEnabled = "Audio.MusicAudioChannelEnabled";
 const std::string Configuration::cAudioSpeechAudioChannelEnabled = "Audio.SpeechAudioChannelEnabled";
@@ -87,6 +89,7 @@ void Configuration::load()
         screenDPI_ = iniConfig.get<size_t>(cVideoScreenDPIKey, 140);
 
         omxLayerIndex_ = iniConfig.get<int32_t>(cVideoOMXLayerIndexKey, 1);
+        videoMargins_ = QRect(0, 0, iniConfig.get<int32_t>(cVideoMarginWidth, 0), iniConfig.get<int32_t>(cVideoMarginHeight, 0));
 
         enableTouchscreen_ = iniConfig.get<bool>(cInputEnableTouchscreenKey, true);
         this->readButtonCodes(iniConfig);
@@ -116,6 +119,7 @@ void Configuration::reset()
     videoResolution_ = aasdk::proto::enums::VideoResolution::_480p;
     screenDPI_ = 140;
     omxLayerIndex_ = 1;
+    videoMargins_ = QRect(0, 0, 0, 0);
     enableTouchscreen_ = true;
     buttonCodes_.clear();
     bluetoothAdapterType_ = BluetoothAdapterType::NONE;
@@ -134,6 +138,8 @@ void Configuration::save()
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
     iniConfig.put<size_t>(cVideoScreenDPIKey, screenDPI_);
     iniConfig.put<int32_t>(cVideoOMXLayerIndexKey, omxLayerIndex_);
+    iniConfig.put<uint32_t>(cVideoMarginWidth, videoMargins_.width());
+    iniConfig.put<uint32_t>(cVideoMarginHeight, videoMargins_.height());
 
     iniConfig.put<bool>(cInputEnableTouchscreenKey, enableTouchscreen_);
     this->writeButtonCodes(iniConfig);
@@ -204,6 +210,16 @@ void Configuration::setOMXLayerIndex(int32_t value)
 int32_t Configuration::getOMXLayerIndex() const
 {
     return omxLayerIndex_;
+}
+
+void Configuration::setVideoMargins(QRect value)
+{
+    videoMargins_ = value;
+}
+
+QRect Configuration::getVideoMargins() const
+{
+    return videoMargins_;
 }
 
 bool Configuration::getTouchscreenEnabled() const

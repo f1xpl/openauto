@@ -38,6 +38,7 @@ public:
     aasdk::proto::enums::VideoFPS::Enum getVideoFPS() const override;
     aasdk::proto::enums::VideoResolution::Enum getVideoResolution() const override;
     size_t getScreenDPI() const override;
+    QRect getVideoMargins() const override;
 
 protected:
     configuration::IConfiguration::Pointer configuration_;
