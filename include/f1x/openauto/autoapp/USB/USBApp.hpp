@@ -19,6 +19,7 @@
 #pragma once
 
 #include <f1x/aasdk/USB/IUSBHub.hpp>
+#include <f1x/aasdk/USB/IConnectedAccessoriesEnumerator.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntityEventHandler.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntityFactory.hpp>
 
@@ -36,7 +37,8 @@ class USBApp: public projection::IAndroidAutoEntityEventHandler, public std::ena
 public:
     typedef std::shared_ptr<USBApp> Pointer;
 
-    USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory, aasdk::usb::IUSBHub::Pointer usbHub);
+    USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+           aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
 
     void start();
     void stop();
@@ -45,6 +47,7 @@ public:
 private:
     using std::enable_shared_from_this<USBApp>::shared_from_this;
 
+    void enumerateDevices();
     void waitForDevice();
     void aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle);
     void onUSBHubError(const aasdk::error::Error& error);
@@ -53,6 +56,7 @@ private:
     boost::asio::io_service::strand strand_;
     projection::IAndroidAutoEntityFactory& androidAutoEntityFactory_;
     aasdk::usb::IUSBHub::Pointer usbHub_;
+    aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator_;
     projection::IAndroidAutoEntity::Pointer androidAutoEntity_;
     bool isStopped_;
 };
