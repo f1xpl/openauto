@@ -17,12 +17,8 @@
 */
 
 #include <QApplication>
-#include <QMainWindow>
 #include <f1x/aasdk/USB/USBHub.hpp>
 #include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
-#include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
-#include <f1x/openauto/autoapp/UI/MainWindow.hpp>
-#include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
 #include <f1x/openauto/autoapp/USB/USBMain.hpp>
 
 namespace f1x
@@ -34,14 +30,13 @@ namespace autoapp
 namespace usb
 {
 
-USBMain::USBMain(libusb_context* context)
-    : usbContext_(context)
-    , usbWrapper_(usbContext_)
+USBMain::USBMain(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration)
+    : usbWrapper_(usbWrapper)
+    , ioService_(ioService)
     , queryFactory_(usbWrapper_, ioService_)
     , queryChainFactory_(usbWrapper_, ioService_, queryFactory_)
-    , configuration_(std::make_shared<configuration::Configuration>())
-    , serviceFactory_(ioService_, configuration_)
-    , androidAutoEntityFactory_(usbWrapper_, ioService_, configuration_, serviceFactory_)
+    , serviceFactory_(ioService_, configuration)
+    , androidAutoEntityFactory_(usbWrapper_, ioService_, configuration, serviceFactory_)
 {
     auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper_, ioService_, queryChainFactory_));
     auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper_, ioService_, queryChainFactory_));
@@ -50,66 +45,14 @@ USBMain::USBMain(libusb_context* context)
                                                      std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
 }
 
-int USBMain::exec(int argc, char* argv[])
+void USBMain::start()
 {
-    QApplication qApplication(argc, argv);
-
-    ui::MainWindow mainWindow;
-    mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    ui::SettingsWindow settingsWindow(configuration_);
-    settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    QObject::connect(&mainWindow, &ui::MainWindow::exit, []() { std::exit(0); });
-    QObject::connect(&mainWindow, &ui::MainWindow::openSettings, &settingsWindow, &ui::SettingsWindow::showFullScreen);
-
-    qApplication.setOverrideCursor(Qt::BlankCursor);
-    bool cursorVisible = false;
-    QObject::connect(&mainWindow, &ui::MainWindow::toggleCursor, [&cursorVisible, &qApplication]() {
-        cursorVisible = !cursorVisible;
-        qApplication.setOverrideCursor(cursorVisible ? Qt::ArrowCursor : Qt::BlankCursor);
-    });
-
-    mainWindow.showFullScreen();
-
-    boost::asio::io_service::work work(ioService_);
-    this->startIOServiceWorkers();
-    this->startUSBWorkers();
     usbApp_->start();
-
-    auto result = qApplication.exec();
-    std::for_each(threadPool_.begin(), threadPool_.end(), std::bind(&std::thread::join, std::placeholders::_1));
-    return result;
 }
 
-void USBMain::startUSBWorkers()
+void USBMain::stop()
 {
-    auto usbWorker = [this]() {
-        timeval libusbEventTimeout{180, 0};
-
-        while(!ioService_.stopped())
-        {
-            libusb_handle_events_timeout_completed(usbContext_, &libusbEventTimeout, nullptr);
-        }
-    };
-    threadPool_.emplace_back(usbWorker);
-    threadPool_.emplace_back(usbWorker);
-    threadPool_.emplace_back(usbWorker);
-    threadPool_.emplace_back(usbWorker);
-}
-
-void USBMain::startIOServiceWorkers()
-{
-    auto ioServiceWorker = [this]() {
-        while(!ioService_.stopped())
-        {
-            ioService_.run();
-        }
-    };
-    threadPool_.emplace_back(ioServiceWorker);
-    threadPool_.emplace_back(ioServiceWorker);
-    threadPool_.emplace_back(ioServiceWorker);
-    threadPool_.emplace_back(ioServiceWorker);
+    usbApp_->stop();
 }
 
 }

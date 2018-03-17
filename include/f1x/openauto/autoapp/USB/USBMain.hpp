@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <thread>
 #include <f1x/aasdk/USB/USBWrapper.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryChain.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryChainFactory.hpp>
@@ -27,6 +26,8 @@
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
+
+class QApplication;
 
 namespace f1x
 {
@@ -40,26 +41,19 @@ namespace usb
 class USBMain
 {
 public:
-    USBMain(libusb_context* context);
+    USBMain(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration);
 
-    int exec(int argc, char* argv[]);
+    void start();
+    void stop();
 
 private:
-    typedef std::vector<std::thread> ThreadPool;
-
-    void startUSBWorkers();
-    void startIOServiceWorkers();
-
-    libusb_context* usbContext_;
-    aasdk::usb::USBWrapper usbWrapper_;
-    boost::asio::io_service ioService_;
+    aasdk::usb::IUSBWrapper& usbWrapper_;
+    boost::asio::io_service& ioService_;
     aasdk::usb::AccessoryModeQueryFactory queryFactory_;
     aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory_;
-    configuration::IConfiguration::Pointer configuration_;
     projection::ServiceFactory serviceFactory_;
     projection::AndroidAutoEntityFactory androidAutoEntityFactory_;
     autoapp::usb::USBApp::Pointer usbApp_;
-    ThreadPool threadPool_;
 };
 
 }
