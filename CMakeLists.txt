@@ -62,10 +62,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 								
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-set(autoapp_sources_directory ${sources_directory}/autoapp)
-file(GLOB_RECURSE source_files ${autoapp_sources_directory}/*.ui ${autoapp_sources_directory}/*.cpp ${include_directory}/*.hpp ${resources_directory}/*.qrc)
+set(common_include_directory ${include_directory}/f1x/openauto/Common)
 
-add_executable(autoapp ${source_files})
+set(autoapp_sources_directory ${sources_directory}/autoapp)
+set(autoapp_include_directory ${include_directory}/f1x/openauto/autoapp)
+file(GLOB_RECURSE autoapp_source_files ${autoapp_sources_directory}/*.ui ${autoapp_sources_directory}/*.cpp ${autoapp_include_directory}/*.hpp ${common_include_directory}/*.hpp ${resources_directory}/*.qrc)
+
+add_executable(autoapp ${autoapp_source_files})
 
 target_link_libraries(autoapp
                         ${Boost_LIBRARIES}
@@ -79,3 +82,15 @@ target_link_libraries(autoapp
                         ${WINSOCK2_LIBRARIES}
                         ${AASDK_PROTO_LIBRARIES}
                         ${AASDK_LIBRARIES})
+
+set(btservice_sources_directory ${sources_directory}/btservice)
+set(btservice_include_directory ${include_directory}/f1x/openauto/btservice)
+file(GLOB_RECURSE btservice_source_files ${btservice_sources_directory}/*.cpp ${btservice_include_directory}/*.hpp ${common_include_directory}/*.hpp)
+
+add_executable(btservice ${btservice_source_files})
+
+target_link_libraries(btservice
+                        ${Boost_LIBRARIES}
+                        ${Qt5Bluetooth_LIBRARIES}
+                        ${PROTOBUF_LIBRARIES}
+                        ${AASDK_PROTO_LIBRARIES})

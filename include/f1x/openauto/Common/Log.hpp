@@ -20,4 +20,4 @@
 
 #include <boost/log/trivial.hpp>
 
-#define OPENAUTO_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[AaApp] "
+#define OPENAUTO_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[OpenAuto] "
