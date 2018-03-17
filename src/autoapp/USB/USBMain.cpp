@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <f1x/aasdk/USB/USBHub.hpp>
+#include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
@@ -42,8 +43,11 @@ USBMain::USBMain(libusb_context* context)
     , serviceFactory_(ioService_, configuration_)
     , androidAutoEntityFactory_(usbWrapper_, ioService_, configuration_, serviceFactory_)
 {
-    aasdk::usb::IUSBHub::Pointer usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper_, ioService_, queryChainFactory_));
-    usbApp_ = std::make_shared<autoapp::usb::USBApp>(ioService_, androidAutoEntityFactory_, std::move(usbHub));
+    auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper_, ioService_, queryChainFactory_));
+    auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper_, ioService_, queryChainFactory_));
+
+    usbApp_ = std::make_shared<autoapp::usb::USBApp>(ioService_, androidAutoEntityFactory_,
+                                                     std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
 }
 
 int USBMain::exec(int argc, char* argv[])

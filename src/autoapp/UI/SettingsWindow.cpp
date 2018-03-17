@@ -73,6 +73,10 @@ void SettingsWindow::onSave()
 
     configuration_->setScreenDPI(static_cast<size_t>(ui_->horizontalSliderScreenDPI->value()));
     configuration_->setOMXLayerIndex(ui_->spinBoxOmxLayerIndex->value());
+
+    QRect videoMargins(0, 0, ui_->spinBoxVideoMarginWidth->value(), ui_->spinBoxVideoMarginHeight->value());
+    configuration_->setVideoMargins(std::move(videoMargins));
+
     configuration_->setTouchscreenEnabled(ui_->checkBoxEnableTouchscreen->isChecked());
     this->saveButtonCheckBoxes();
 
@@ -129,6 +133,10 @@ void SettingsWindow::load()
     ui_->radioButton1080p->setChecked(configuration_->getVideoResolution() == aasdk::proto::enums::VideoResolution::_1080p);
     ui_->horizontalSliderScreenDPI->setValue(static_cast<int>(configuration_->getScreenDPI()));
     ui_->spinBoxOmxLayerIndex->setValue(configuration_->getOMXLayerIndex());
+
+    const auto& videoMargins = configuration_->getVideoMargins();
+    ui_->spinBoxVideoMarginWidth->setValue(videoMargins.width());
+    ui_->spinBoxVideoMarginHeight->setValue(videoMargins.height());
 
     ui_->checkBoxEnableTouchscreen->setChecked(configuration_->getTouchscreenEnabled());
     this->loadButtonCheckBoxes();

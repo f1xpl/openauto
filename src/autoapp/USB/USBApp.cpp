@@ -29,11 +29,13 @@ namespace autoapp
 namespace usb
 {
 
-USBApp::USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory, aasdk::usb::IUSBHub::Pointer usbHub)
+USBApp::USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+               aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator)
     : ioService_(ioService)
     , strand_(ioService_)
     , androidAutoEntityFactory_(androidAutoEntityFactory)
     , usbHub_(std::move(usbHub))
+    , connectedAccessoriesEnumerator_(std::move(connectedAccessoriesEnumerator))
     , isStopped_(false)
 {
 
@@ -43,6 +45,7 @@ void USBApp::start()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         this->waitForDevice();
+        this->enumerateDevices();
     });
 }
 
@@ -50,6 +53,7 @@ void USBApp::stop()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         isStopped_ = true;
+        connectedAccessoriesEnumerator_->cancel();
         usbHub_->cancel();
 
         if(androidAutoEntity_ != nullptr)
@@ -82,6 +86,19 @@ void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
     {
         OPENAUTO_LOG(warning) << "[USBApp] android auto entity is still running.";
     }
+}
+
+void USBApp::enumerateDevices()
+{
+    auto promise = aasdk::usb::IConnectedAccessoriesEnumerator::Promise::defer(strand_);
+    promise->then([this, self = this->shared_from_this()](auto result) {
+            OPENAUTO_LOG(info) << "[USBApp] Devices enumeration result: " << result;
+        },
+        [this, self = this->shared_from_this()](auto e) {
+            OPENAUTO_LOG(error) << "[USBApp] Devices enumeration failed: " << e.what();
+        });
+
+    connectedAccessoriesEnumerator_->enumerate(std::move(promise));
 }
 
 void USBApp::waitForDevice()

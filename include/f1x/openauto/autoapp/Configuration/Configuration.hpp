@@ -52,6 +52,8 @@ public:
     void setScreenDPI(size_t value) override;
     void setOMXLayerIndex(int32_t value) override;
     int32_t getOMXLayerIndex() const override;
+    void setVideoMargins(QRect value) override;
+    QRect getVideoMargins() const override;
 
     bool getTouchscreenEnabled() const override;
     void setTouchscreenEnabled(bool value) override;
@@ -79,6 +81,7 @@ private:
     aasdk::proto::enums::VideoResolution::Enum videoResolution_;
     size_t screenDPI_;
     int32_t omxLayerIndex_;
+    QRect videoMargins_;
     bool enableTouchscreen_;
     ButtonCodes buttonCodes_;
     BluetoothAdapterType bluetoothAdapterType_;
@@ -95,6 +98,8 @@ private:
     static const std::string cVideoResolutionKey;
     static const std::string cVideoScreenDPIKey;
     static const std::string cVideoOMXLayerIndexKey;
+    static const std::string cVideoMarginWidth;
+    static const std::string cVideoMarginHeight;
 
     static const std::string cAudioMusicAudioChannelEnabled;
     static const std::string cAudioSpeechAudioChannelEnabled;

@@ -260,48 +260,6 @@ color: rgb(238, 238, 236);</string>
       </property>
      </widget>
     </widget>
-    <widget class="QSlider" name="horizontalSliderScreenDPI">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>390</y>
-       <width>531</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="maximum">
-      <number>400</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelScreenDPI">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>360</y>
-       <width>91</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Screen DPI</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelScreenDPIValue">
-     <property name="geometry">
-      <rect>
-       <x>570</x>
-       <y>380</y>
-       <width>41</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>400</string>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBoxOmxLayerIndex">
      <property name="geometry">
       <rect>
@@ -312,7 +270,7 @@ color: rgb(238, 238, 236);</string>
       </rect>
      </property>
      <property name="title">
-      <string>OMX Layer index</string>
+      <string>Display</string>
      </property>
      <widget class="QLabel" name="labelOmxLayerIndex">
       <property name="geometry">
@@ -361,6 +319,100 @@ color: rgb(238, 238, 236);</string>
         <width>71</width>
         <height>41</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelVideoMarginWidth">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>40</y>
+        <width>101</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Margin width:</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBoxVideoMarginWidth">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>30</y>
+        <width>71</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelVideoMarginHeight">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>40</y>
+        <width>111</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Margin height:</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBoxVideoMarginHeight">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>30</y>
+        <width>71</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBoxScreenDPI">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>621</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Screen DPI</string>
+     </property>
+     <widget class="QLabel" name="labelScreenDPIValue">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>40</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>400</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSliderScreenDPI">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>531</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>400</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </widget>
@@ -912,6 +964,8 @@ color: rgb(238, 238, 236);</string>
   <tabstop>radioButton720p</tabstop>
   <tabstop>radioButton1080p</tabstop>
   <tabstop>spinBoxOmxLayerIndex</tabstop>
+  <tabstop>spinBoxVideoMarginWidth</tabstop>
+  <tabstop>spinBoxVideoMarginHeight</tabstop>
   <tabstop>horizontalSliderScreenDPI</tabstop>
   <tabstop>checkBoxMusicAudioChannel</tabstop>
   <tabstop>checkBoxSpeechAudioChannel</tabstop>
