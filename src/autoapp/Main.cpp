@@ -16,89 +16,43 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <thread>
 #include <QApplication>
-#include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
-#include <f1x/openauto/autoapp/UI/MainWindow.hpp>
-#include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
-#include <f1x/openauto/autoapp/USB/USBMain.hpp>
-#include <f1x/openauto/Common/Log.hpp>
+#include <f1x/aasdk/USB/USBHub.hpp>
+#include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
+#include <f1x/openauto/autoapp/Main.hpp>
 
-namespace aasdk = f1x::aasdk;
-namespace autoapp = f1x::openauto::autoapp;
-using ThreadPool = std::vector<std::thread>;
-
-void startUSBWorkers(boost::asio::io_service& ioService, libusb_context* usbContext, ThreadPool& threadPool)
+namespace f1x
 {
-    auto usbWorker = [&ioService, usbContext]() {
-        timeval libusbEventTimeout{180, 0};
+namespace openauto
+{
+namespace autoapp
+{
 
-        while(!ioService.stopped())
-        {
-            libusb_handle_events_timeout_completed(usbContext, &libusbEventTimeout, nullptr);
-        }
-    };
+Main::Main(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration)
+    : usbWrapper_(usbWrapper)
+    , ioService_(ioService)
+    , queryFactory_(usbWrapper_, ioService_)
+    , queryChainFactory_(usbWrapper_, ioService_, queryFactory_)
+    , serviceFactory_(ioService_, configuration)
+    , androidAutoEntityFactory_(usbWrapper_, ioService_, configuration, serviceFactory_)
+{
+    auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper_, ioService_, queryChainFactory_));
+    auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper_, ioService_, queryChainFactory_));
 
-    threadPool.emplace_back(usbWorker);
-    threadPool.emplace_back(usbWorker);
-    threadPool.emplace_back(usbWorker);
-    threadPool.emplace_back(usbWorker);
+    app_ = std::make_shared<autoapp::App>(ioService_, androidAutoEntityFactory_,
+                                          std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
 }
 
-void startIOServiceWorkers(boost::asio::io_service& ioService, ThreadPool& threadPool)
+void Main::start()
 {
-    auto ioServiceWorker = [&ioService]() {
-        ioService.run();
-    };
-
-    threadPool.emplace_back(ioServiceWorker);
-    threadPool.emplace_back(ioServiceWorker);
-    threadPool.emplace_back(ioServiceWorker);
-    threadPool.emplace_back(ioServiceWorker);
+    app_->start();
 }
 
-int main(int argc, char* argv[])
+void Main::stop()
 {
-    libusb_context* usbContext;
-    if(libusb_init(&usbContext) != 0)
-    {
-        OPENAUTO_LOG(error) << "[OpenAuto] libusb init failed.";
-        return 1;
-    }
+    app_->stop();
+}
 
-    QApplication qApplication(argc, argv);
-    boost::asio::io_service ioService;
-    boost::asio::io_service::work work(ioService);
-
-    autoapp::ui::MainWindow mainWindow;
-    //mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-    mainWindow.showFullScreen();
-
-    auto configuration = std::make_shared<autoapp::configuration::Configuration>();
-    autoapp::ui::SettingsWindow settingsWindow(configuration);
-    //settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    qApplication.setOverrideCursor(Qt::BlankCursor);
-    bool cursorVisible = false;
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&cursorVisible, &qApplication]() {
-        cursorVisible = !cursorVisible;
-        qApplication.setOverrideCursor(cursorVisible ? Qt::ArrowCursor : Qt::BlankCursor);
-    });
-
-    aasdk::usb::USBWrapper usbWrapper(usbContext);
-    autoapp::usb::USBMain main(usbWrapper, ioService, configuration);
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
-
-    std::vector<std::thread> threadPool;
-    startUSBWorkers(ioService, usbContext, threadPool);
-    startIOServiceWorkers(ioService, threadPool);
-    main.start();
-
-    auto result = qApplication.exec();
-    std::for_each(threadPool.begin(), threadPool.end(), std::bind(&std::thread::join, std::placeholders::_1));
-
-    libusb_exit(usbContext);
-    return result;
+}
+}
 }

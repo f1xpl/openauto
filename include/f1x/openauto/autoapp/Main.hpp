@@ -22,12 +22,10 @@
 #include <f1x/aasdk/USB/AccessoryModeQueryChain.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryChainFactory.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryFactory.hpp>
-#include <f1x/openauto/autoapp/USB/USBApp.hpp>
+#include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
-
-class QApplication;
 
 namespace f1x
 {
@@ -35,13 +33,11 @@ namespace openauto
 {
 namespace autoapp
 {
-namespace usb
-{
 
-class USBMain
+class Main
 {
 public:
-    USBMain(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration);
+    Main(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration);
 
     void start();
     void stop();
@@ -53,10 +49,9 @@ private:
     aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory_;
     projection::ServiceFactory serviceFactory_;
     projection::AndroidAutoEntityFactory androidAutoEntityFactory_;
-    autoapp::usb::USBApp::Pointer usbApp_;
+    autoapp::App::Pointer app_;
 };
 
-}
 }
 }
 }

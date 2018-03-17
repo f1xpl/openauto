@@ -29,23 +29,21 @@ namespace openauto
 {
 namespace autoapp
 {
-namespace usb
-{
 
-class USBApp: public projection::IAndroidAutoEntityEventHandler, public std::enable_shared_from_this<USBApp>
+class App: public projection::IAndroidAutoEntityEventHandler, public std::enable_shared_from_this<App>
 {
 public:
-    typedef std::shared_ptr<USBApp> Pointer;
+    typedef std::shared_ptr<App> Pointer;
 
-    USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
-           aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
+    App(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+        aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
 
     void start();
     void stop();
     void onAndroidAutoQuit() override;
 
 private:
-    using std::enable_shared_from_this<USBApp>::shared_from_this;
+    using std::enable_shared_from_this<App>::shared_from_this;
 
     void enumerateDevices();
     void waitForDevice();
@@ -61,7 +59,6 @@ private:
     bool isStopped_;
 };
 
-}
 }
 }
 }

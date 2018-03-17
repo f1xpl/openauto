@@ -17,7 +17,7 @@
 */
 
 #include <thread>
-#include <f1x/openauto/autoapp/USB/USBApp.hpp>
+#include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace f1x
@@ -26,11 +26,9 @@ namespace openauto
 {
 namespace autoapp
 {
-namespace usb
-{
 
-USBApp::USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
-               aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator)
+App::App(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+         aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator)
     : ioService_(ioService)
     , strand_(ioService_)
     , androidAutoEntityFactory_(androidAutoEntityFactory)
@@ -41,7 +39,7 @@ USBApp::USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntit
 
 }
 
-void USBApp::start()
+void App::start()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         this->waitForDevice();
@@ -49,7 +47,7 @@ void USBApp::start()
     });
 }
 
-void USBApp::stop()
+void App::stop()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         isStopped_ = true;
@@ -63,9 +61,9 @@ void USBApp::stop()
     });
 }
 
-void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
+void App::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
 {
-    OPENAUTO_LOG(info) << "[USBApp] Device connected.";
+    OPENAUTO_LOG(info) << "[App] Device connected.";
 
     if(androidAutoEntity_ == nullptr)
     {
@@ -76,7 +74,7 @@ void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
         }
         catch(const aasdk::error::Error& error)
         {
-            OPENAUTO_LOG(error) << "[USBApp] AndroidAutoEntity create error: " << error.what();
+            OPENAUTO_LOG(error) << "[App] AndroidAutoEntity create error: " << error.what();
 
             androidAutoEntity_.reset();
             this->waitForDevice();
@@ -84,37 +82,37 @@ void USBApp::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
     }
     else
     {
-        OPENAUTO_LOG(warning) << "[USBApp] android auto entity is still running.";
+        OPENAUTO_LOG(warning) << "[App] android auto entity is still running.";
     }
 }
 
-void USBApp::enumerateDevices()
+void App::enumerateDevices()
 {
     auto promise = aasdk::usb::IConnectedAccessoriesEnumerator::Promise::defer(strand_);
     promise->then([this, self = this->shared_from_this()](auto result) {
-            OPENAUTO_LOG(info) << "[USBApp] Devices enumeration result: " << result;
+            OPENAUTO_LOG(info) << "[App] Devices enumeration result: " << result;
         },
         [this, self = this->shared_from_this()](auto e) {
-            OPENAUTO_LOG(error) << "[USBApp] Devices enumeration failed: " << e.what();
+            OPENAUTO_LOG(error) << "[App] Devices enumeration failed: " << e.what();
         });
 
     connectedAccessoriesEnumerator_->enumerate(std::move(promise));
 }
 
-void USBApp::waitForDevice()
+void App::waitForDevice()
 {
-    OPENAUTO_LOG(info) << "[USBApp] Waiting for device...";
+    OPENAUTO_LOG(info) << "[App] Waiting for device...";
 
     auto promise = aasdk::usb::IUSBHub::Promise::defer(strand_);
-    promise->then(std::bind(&USBApp::aoapDeviceHandler, this->shared_from_this(), std::placeholders::_1),
-                  std::bind(&USBApp::onUSBHubError, this->shared_from_this(), std::placeholders::_1));
+    promise->then(std::bind(&App::aoapDeviceHandler, this->shared_from_this(), std::placeholders::_1),
+                  std::bind(&App::onUSBHubError, this->shared_from_this(), std::placeholders::_1));
     usbHub_->start(std::move(promise));
 }
 
-void USBApp::onAndroidAutoQuit()
+void App::onAndroidAutoQuit()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
-        OPENAUTO_LOG(info) << "[USBApp] quit.";
+        OPENAUTO_LOG(info) << "[App] quit.";
 
         androidAutoEntity_->stop();
         androidAutoEntity_.reset();
@@ -126,9 +124,9 @@ void USBApp::onAndroidAutoQuit()
     });
 }
 
-void USBApp::onUSBHubError(const aasdk::error::Error& error)
+void App::onUSBHubError(const aasdk::error::Error& error)
 {
-    OPENAUTO_LOG(error) << "[USBApp] usb hub error: " << error.what();
+    OPENAUTO_LOG(error) << "[App] usb hub error: " << error.what();
 
     if(error.getCode() == aasdk::error::ErrorCode::OPERATION_ABORTED ||
        error.getCode() == aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
@@ -137,7 +135,6 @@ void USBApp::onUSBHubError(const aasdk::error::Error& error)
     }
 }
 
-}
 }
 }
 }
