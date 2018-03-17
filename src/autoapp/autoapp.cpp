@@ -71,12 +71,12 @@ int main(int argc, char* argv[])
     boost::asio::io_service::work work(ioService);
 
     autoapp::ui::MainWindow mainWindow;
-    //mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
+    mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
     mainWindow.showFullScreen();
 
     auto configuration = std::make_shared<autoapp::configuration::Configuration>();
     autoapp::ui::SettingsWindow settingsWindow(configuration);
-    //settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
+    settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     qApplication.setOverrideCursor(Qt::BlankCursor);
     bool cursorVisible = false;
