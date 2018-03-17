@@ -29,8 +29,18 @@ int main(int argc, char* argv[])
 
     const QBluetoothAddress address;
     const uint16_t portNumber = 5000;
-    btservice::AndroidBluetoothService androidBluetoothService(portNumber);
 
+    btservice::AndroidBluetoothServer androidBluetoothServer;
+    if(!androidBluetoothServer.start(address, portNumber))
+    {
+        OPENAUTO_LOG(error) << "[btservice] Server start failed.";
+        return 2;
+    }
+
+    OPENAUTO_LOG(info) << "[btservice] Listening for connections, address: " << address.toString().toStdString()
+                       << ", port: " << portNumber;
+
+    btservice::AndroidBluetoothService androidBluetoothService(portNumber);
     if(!androidBluetoothService.registerService(address))
     {
         OPENAUTO_LOG(error) << "[btservice] Service registration failed.";
@@ -40,17 +50,6 @@ int main(int argc, char* argv[])
     {
         OPENAUTO_LOG(info) << "[btservice] Service registered, port: " << portNumber;
     }
-
-    btservice::AndroidBluetoothServer androidBluetoothServer;
-
-    if(!androidBluetoothServer.start(address, portNumber))
-    {
-        OPENAUTO_LOG(error) << "[btservice] Server start failed.";
-        return 2;
-    }
-
-    OPENAUTO_LOG(info) << "[btservice] Listening for connections, address: " << address.toString().toStdString()
-                       << ", port: " << portNumber;
 
     qApplication.exec();
     androidBluetoothService.unregisterService();
