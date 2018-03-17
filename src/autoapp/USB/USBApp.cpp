@@ -53,6 +53,7 @@ void USBApp::stop()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         isStopped_ = true;
+        connectedAccessoriesEnumerator_->cancel();
         usbHub_->cancel();
 
         if(androidAutoEntity_ != nullptr)
