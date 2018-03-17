@@ -16,7 +16,7 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <f1x/openauto/Common/Log.hpp>
 #include <f1x/openauto/btservice/AndroidBluetoothService.hpp>
 #include <f1x/openauto/btservice/AndroidBluetoothServer.hpp>
@@ -25,7 +25,7 @@ namespace btservice = f1x::openauto::btservice;
 
 int main(int argc, char* argv[])
 {
-    QCoreApplication qApplication(argc, argv);
+    QApplication qApplication(argc, argv);
 
     const QBluetoothAddress address;
     const uint16_t portNumber = 5000;

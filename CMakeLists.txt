@@ -92,5 +92,6 @@ add_executable(btservice ${btservice_source_files})
 target_link_libraries(btservice
                         ${Boost_LIBRARIES}
                         ${Qt5Bluetooth_LIBRARIES}
+                        ${Qt5MultimediaWidgets_LIBRARIES}
                         ${PROTOBUF_LIBRARIES}
                         ${AASDK_PROTO_LIBRARIES})
