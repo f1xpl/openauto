@@ -16,24 +16,43 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <f1x/openauto/autoapp/USB/USBMain.hpp>
-#include <f1x/openauto/Common/Log.hpp>
+#include <QApplication>
+#include <f1x/aasdk/USB/USBHub.hpp>
+#include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
+#include <f1x/openauto/autoapp/Main.hpp>
 
-namespace aasdk = f1x::aasdk;
-namespace autoapp = f1x::openauto::autoapp;
-
-int main(int argc, char* argv[])
+namespace f1x
 {
-    libusb_context* context;
-    if(libusb_init(&context) != 0)
-    {
-        OPENAUTO_LOG(error) << "[OpenAuto] libusb init failed.";
-        return 1;
-    }
+namespace openauto
+{
+namespace autoapp
+{
 
-    autoapp::usb::USBMain main(context);
-    auto result = main.exec(argc, argv);
+Main::Main(aasdk::usb::IUSBWrapper& usbWrapper, boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration)
+    : usbWrapper_(usbWrapper)
+    , ioService_(ioService)
+    , queryFactory_(usbWrapper_, ioService_)
+    , queryChainFactory_(usbWrapper_, ioService_, queryFactory_)
+    , serviceFactory_(ioService_, configuration)
+    , androidAutoEntityFactory_(usbWrapper_, ioService_, configuration, serviceFactory_)
+{
+    auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper_, ioService_, queryChainFactory_));
+    auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper_, ioService_, queryChainFactory_));
 
-    libusb_exit(context);
-    return result;
+    app_ = std::make_shared<autoapp::App>(ioService_, androidAutoEntityFactory_,
+                                          std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
+}
+
+void Main::start()
+{
+    app_->start();
+}
+
+void Main::stop()
+{
+    app_->stop();
+}
+
+}
+}
 }

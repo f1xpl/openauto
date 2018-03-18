@@ -18,6 +18,34 @@
 
 #pragma once
 
-#include <boost/log/trivial.hpp>
+#include <stdint.h>
+#include <memory>
+#include <QBluetoothServer>
+#include <f1x/openauto/btservice/IAndroidBluetoothServer.hpp>
 
-#define OPENAUTO_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[OpenAuto] "
+namespace f1x
+{
+namespace openauto
+{
+namespace btservice
+{
+
+class AndroidBluetoothServer: public QObject, public IAndroidBluetoothServer
+{
+    Q_OBJECT
+
+public:
+    AndroidBluetoothServer();
+
+    bool start(const QBluetoothAddress& address, uint16_t portNumber) override;
+
+private slots:
+    void onClientConnected();
+
+private:
+    std::unique_ptr<QBluetoothServer> rfcommServer_;
+};
+
+}
+}
+}

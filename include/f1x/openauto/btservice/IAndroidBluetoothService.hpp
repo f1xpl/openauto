@@ -18,6 +18,24 @@
 
 #pragma once
 
-#include <boost/log/trivial.hpp>
+#include <QBluetoothAddress>
 
-#define OPENAUTO_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[OpenAuto] "
+namespace f1x
+{
+namespace openauto
+{
+namespace btservice
+{
+
+class IAndroidBluetoothService
+{
+public:
+    virtual ~IAndroidBluetoothService() = default;
+
+    virtual bool registerService(const QBluetoothAddress& bluetoothAddress) = 0;
+    virtual bool unregisterService() = 0;
+};
+
+}
+}
+}
