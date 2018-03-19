@@ -38,7 +38,7 @@ public:
     App(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
         aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
 
-    void start();
+    void waitForUSBDevice();
     void stop();
     void onAndroidAutoQuit() override;
 

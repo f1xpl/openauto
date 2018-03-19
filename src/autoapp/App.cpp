@@ -39,7 +39,7 @@ App::App(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFacto
 
 }
 
-void App::start()
+void App::waitForUSBDevice()
 {
     strand_.dispatch([this, self = this->shared_from_this()]() {
         this->waitForDevice();

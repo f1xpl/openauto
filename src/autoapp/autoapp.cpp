@@ -18,10 +18,18 @@
 
 #include <thread>
 #include <QApplication>
+#include <f1x/aasdk/USB/USBHub.hpp>
+#include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryChain.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryChainFactory.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryFactory.hpp>
+#include <f1x/openauto/autoapp/App.hpp>
+#include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
+#include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
+#include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
-#include <f1x/openauto/autoapp/Main.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace aasdk = f1x::aasdk;
@@ -66,35 +74,41 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    QApplication qApplication(argc, argv);
     boost::asio::io_service ioService;
     boost::asio::io_service::work work(ioService);
+    std::vector<std::thread> threadPool;
+    startUSBWorkers(ioService, usbContext, threadPool);
+    startIOServiceWorkers(ioService, threadPool);
 
+    QApplication qApplication(argc, argv);
     autoapp::ui::MainWindow mainWindow;
     mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-    mainWindow.showFullScreen();
 
     auto configuration = std::make_shared<autoapp::configuration::Configuration>();
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    qApplication.setOverrideCursor(Qt::BlankCursor);
-    bool cursorVisible = false;
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&cursorVisible, &qApplication]() {
-        cursorVisible = !cursorVisible;
-        qApplication.setOverrideCursor(cursorVisible ? Qt::ArrowCursor : Qt::BlankCursor);
-    });
-
-    aasdk::usb::USBWrapper usbWrapper(usbContext);
-    autoapp::Main main(usbWrapper, ioService, configuration);
-
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
 
-    std::vector<std::thread> threadPool;
-    startUSBWorkers(ioService, usbContext, threadPool);
-    startIOServiceWorkers(ioService, threadPool);
-    main.start();
+    qApplication.setOverrideCursor(Qt::BlankCursor);
+    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&qApplication]() {
+        const auto cursor = qApplication.overrideCursor()->shape() == Qt::BlankCursor ? Qt::ArrowCursor : Qt::BlankCursor;
+        qApplication.setOverrideCursor(cursor);
+    });
+
+    mainWindow.showFullScreen();
+
+    aasdk::usb::USBWrapper usbWrapper(usbContext);
+    aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
+    aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory(usbWrapper, ioService, queryFactory);
+    autoapp::projection::ServiceFactory serviceFactory(ioService, configuration);
+    autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(usbWrapper, ioService, configuration, serviceFactory);
+
+    auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
+    auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
+    auto app = std::make_shared<autoapp::App>(ioService, androidAutoEntityFactory, std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
+    app->waitForUSBDevice();
 
     auto result = qApplication.exec();
     std::for_each(threadPool.begin(), threadPool.end(), std::bind(&std::thread::join, std::placeholders::_1));
