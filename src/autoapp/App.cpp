@@ -75,6 +75,7 @@ void App::start(aasdk::tcp::ITCPEndpoint::SocketPointer socket)
         }
         else
         {
+            tcpWrapper_.close(*socket);
             OPENAUTO_LOG(warning) << "[App] android auto entity is still running.";
         }
     });
