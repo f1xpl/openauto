@@ -52,8 +52,9 @@ void AudioOutput::createAudioOutput()
     OPENAUTO_LOG(debug) << "[AudioOutput] create.";
     audioOutput_ = std::make_unique<QAudioOutput>(QAudioDeviceInfo::defaultOutputDevice(), audioFormat_);
 
-    // Default volume level (max) produces crackles
-    audioOutput_->setVolume(static_cast<qreal>(0.90));
+    // Setting this category switching to the low latency mode
+    // See: http://code.qt.io/cgit/qt/qtmultimedia.git/tree/src/plugins/pulseaudio/qaudiooutput_pulse.cpp?h=5.7#n58
+    audioOutput_->setCategory("game");
 }
 
 bool AudioOutput::open()
@@ -103,15 +104,12 @@ void AudioOutput::onStartPlayback()
         audioOutput_->start(&audioBuffer_);
         playbackStarted_ = true;
     }
-    else
-    {
-        audioOutput_->resume();
-    }
 }
 
 void AudioOutput::onSuspendPlayback()
 {
-    audioOutput_->suspend();
+    // QAudioOutput is in pull mode so suspending/resuming are not needed.
+    // Keep this interface for any further purposes
 }
 
 void AudioOutput::onStopPlayback()
