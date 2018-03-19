@@ -17,6 +17,8 @@
 */
 
 #include <thread>
+#include <f1x/aasdk/USB/AOAPDevice.hpp>
+#include <f1x/aasdk/TCP/TCPEndpoint.hpp>
 #include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
@@ -27,9 +29,11 @@ namespace openauto
 namespace autoapp
 {
 
-App::App(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+App::App(boost::asio::io_service& ioService, aasdk::usb::USBWrapper& usbWrapper, aasdk::tcp::ITCPWrapper& tcpWrapper, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
          aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator)
     : ioService_(ioService)
+    , usbWrapper_(usbWrapper)
+    , tcpWrapper_(tcpWrapper)
     , strand_(ioService_)
     , androidAutoEntityFactory_(androidAutoEntityFactory)
     , usbHub_(std::move(usbHub))
@@ -44,6 +48,35 @@ void App::waitForUSBDevice()
     strand_.dispatch([this, self = this->shared_from_this()]() {
         this->waitForDevice();
         this->enumerateDevices();
+    });
+}
+
+void App::start(aasdk::tcp::ITCPEndpoint::SocketPointer socket)
+{
+    strand_.dispatch([this, self = this->shared_from_this(), socket = std::move(socket)]() mutable {
+        if(androidAutoEntity_ == nullptr)
+        {
+            try
+            {
+                usbHub_->cancel();
+                connectedAccessoriesEnumerator_->cancel();
+
+                auto tcpEndpoint(std::make_shared<aasdk::tcp::TCPEndpoint>(tcpWrapper_, std::move(socket)));
+                androidAutoEntity_ = androidAutoEntityFactory_.create(std::move(tcpEndpoint));
+                androidAutoEntity_->start(*this);
+            }
+            catch(const aasdk::error::Error& error)
+            {
+                OPENAUTO_LOG(error) << "[App] TCP AndroidAutoEntity create error: " << error.what();
+
+                androidAutoEntity_.reset();
+                this->waitForDevice();
+            }
+        }
+        else
+        {
+            OPENAUTO_LOG(warning) << "[App] android auto entity is still running.";
+        }
     });
 }
 
@@ -69,12 +102,15 @@ void App::aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle)
     {
         try
         {
-            androidAutoEntity_ = androidAutoEntityFactory_.create(std::move(deviceHandle));
+            connectedAccessoriesEnumerator_->cancel();
+
+            auto aoapDevice(aasdk::usb::AOAPDevice::create(usbWrapper_, ioService_, deviceHandle));
+            androidAutoEntity_ = androidAutoEntityFactory_.create(std::move(aoapDevice));
             androidAutoEntity_->start(*this);
         }
         catch(const aasdk::error::Error& error)
         {
-            OPENAUTO_LOG(error) << "[App] AndroidAutoEntity create error: " << error.what();
+            OPENAUTO_LOG(error) << "[App] USB AndroidAutoEntity create error: " << error.what();
 
             androidAutoEntity_.reset();
             this->waitForDevice();
@@ -128,8 +164,8 @@ void App::onUSBHubError(const aasdk::error::Error& error)
 {
     OPENAUTO_LOG(error) << "[App] usb hub error: " << error.what();
 
-    if(error.getCode() == aasdk::error::ErrorCode::OPERATION_ABORTED ||
-       error.getCode() == aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
+    if(error.getCode() != aasdk::error::ErrorCode::OPERATION_ABORTED &&
+       error.getCode() != aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
     {
         this->waitForDevice();
     }

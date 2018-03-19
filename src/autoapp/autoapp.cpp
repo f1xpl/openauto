@@ -23,6 +23,7 @@
 #include <f1x/aasdk/USB/AccessoryModeQueryChain.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryChainFactory.hpp>
 #include <f1x/aasdk/USB/AccessoryModeQueryFactory.hpp>
+#include <f1x/aasdk/TCP/TCPWrapper.hpp>
 #include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
@@ -99,15 +100,16 @@ int main(int argc, char* argv[])
 
     mainWindow.showFullScreen();
 
+    aasdk::tcp::TCPWrapper tcpWrapper;
     aasdk::usb::USBWrapper usbWrapper(usbContext);
     aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
     aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory(usbWrapper, ioService, queryFactory);
     autoapp::projection::ServiceFactory serviceFactory(ioService, configuration);
-    autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(usbWrapper, ioService, configuration, serviceFactory);
+    autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(ioService, configuration, serviceFactory);
 
     auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
     auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
-    auto app = std::make_shared<autoapp::App>(ioService, androidAutoEntityFactory, std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
+    auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
     app->waitForUSBDevice();
 
     auto result = qApplication.exec();
