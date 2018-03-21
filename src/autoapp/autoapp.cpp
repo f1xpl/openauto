@@ -31,6 +31,7 @@
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
+#include <f1x/openauto/autoapp/UI/ConnectDialog.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace aasdk = f1x::aasdk;
@@ -89,8 +90,12 @@ int main(int argc, char* argv[])
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    autoapp::ui::ConnectDialog connectDialog;
+    connectDialog.setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
+    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openConnectDialog, &connectDialog, &autoapp::ui::ConnectDialog::exec);
 
     qApplication.setOverrideCursor(Qt::BlankCursor);
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&qApplication]() {
@@ -108,8 +113,8 @@ int main(int argc, char* argv[])
     autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(ioService, configuration, serviceFactory);
 
     auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
-    auto ConnectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
-    auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(ConnectedAccessoriesEnumerator));
+    auto connectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
+    auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(connectedAccessoriesEnumerator));
     app->waitForUSBDevice();
 
     auto result = qApplication.exec();

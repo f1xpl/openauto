@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Settings</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(46, 52, 54);
