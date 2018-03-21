@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QDialog>
+#include <f1x/aasdk/TCP/ITCPEndpoint.hpp>
+#include <f1x/aasdk/TCP/ITCPWrapper.hpp>
 
 namespace Ui {
 class ConnectDialog;
@@ -20,11 +22,22 @@ class ConnectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ConnectDialog(QWidget *parent = nullptr);
+    explicit ConnectDialog(boost::asio::io_service& ioService,  aasdk::tcp::ITCPWrapper& tcpWrapper, QWidget *parent = nullptr);
     ~ConnectDialog() override;
 
+signals:
+    void connectToDevice(const QString& ipAddress);
+    void connected(aasdk::tcp::ITCPEndpoint::SocketPointer socket);
+    void connectionFailed();
+
+private slots:
+    void onConnectButtonClicked();
+    void onConnectionFailed();
+
 private:
-    Ui::ConnectDialog *ui;
+    boost::asio::io_service& ioService_;
+    aasdk::tcp::ITCPWrapper& tcpWrapper_;
+    Ui::ConnectDialog *ui_;
 };
 
 }

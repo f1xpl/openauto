@@ -90,8 +90,9 @@ int main(int argc, char* argv[])
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    autoapp::ui::ConnectDialog connectDialog;
-    connectDialog.setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+    aasdk::tcp::TCPWrapper tcpWrapper;
+    autoapp::ui::ConnectDialog connectDialog(ioService, tcpWrapper);
+    connectDialog.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
@@ -105,7 +106,6 @@ int main(int argc, char* argv[])
 
     mainWindow.showFullScreen();
 
-    aasdk::tcp::TCPWrapper tcpWrapper;
     aasdk::usb::USBWrapper usbWrapper(usbContext);
     aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
     aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory(usbWrapper, ioService, queryFactory);
@@ -115,6 +115,11 @@ int main(int argc, char* argv[])
     auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
     auto connectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
     auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(connectedAccessoriesEnumerator));
+
+    QObject::connect(&connectDialog, &autoapp::ui::ConnectDialog::connected, [&app](auto socket) {
+        app->start(std::move(socket));
+    });
+
     app->waitForUSBDevice();
 
     auto result = qApplication.exec();
