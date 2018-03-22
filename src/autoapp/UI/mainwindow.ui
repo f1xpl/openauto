@@ -228,7 +228,6 @@ color: rgb(238, 238, 236);</string>
     </property>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
   <tabstop>pushButtonToggleCursor</tabstop>
