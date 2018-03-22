@@ -37,17 +37,28 @@ void ConnectDialog::onConnectButtonClicked()
 
     const auto& ipAddress = ui_->lineEditIPAddress->text().toStdString();
     auto socket = std::make_shared<boost::asio::ip::tcp::socket>(ioService_);
-    tcpWrapper_.asyncConnect(*socket, ipAddress, 5277, [this, socket](auto ec) mutable {
-        if(!ec)
-        {
-            emit connectionSucceed(std::move(socket));
-            this->close();
-        }
-        else
-        {
-            emit connectionFailed();
-        }
-    });
+
+    try
+    {
+        tcpWrapper_.asyncConnect(*socket, ipAddress, 5277, std::bind(&ConnectDialog::connectHandler, this, std::placeholders::_1, socket));
+    }
+    catch(const boost::system::system_error& se)
+    {
+        emit connectionFailed(QString(se.what()));
+    }
+}
+
+void ConnectDialog::connectHandler(const boost::system::error_code& ec, aasdk::tcp::ITCPEndpoint::SocketPointer socket)
+{
+    if(!ec)
+    {
+        emit connectionSucceed(std::move(socket));
+        this->close();
+    }
+    else
+    {
+        emit connectionFailed(QString::fromStdString(ec.message()));
+    }
 }
 
 void ConnectDialog::onConnectionSucceed()
@@ -55,11 +66,11 @@ void ConnectDialog::onConnectionSucceed()
     this->setControlsEnabledStatus(true);
 }
 
-void ConnectDialog::onConnectionFailed()
+void ConnectDialog::onConnectionFailed(const QString& message)
 {
     this->setControlsEnabledStatus(true);
 
-    QMessageBox errorMessage(QMessageBox::Critical, "Error", "Connection failed.", QMessageBox::Ok);
+    QMessageBox errorMessage(QMessageBox::Critical, "Connect error", message, QMessageBox::Ok);
     errorMessage.setWindowFlags(Qt::WindowStaysOnTopHint);
     errorMessage.exec();
 }
