@@ -27,12 +27,14 @@ public:
 
 signals:
     void connectToDevice(const QString& ipAddress);
-    void connected(aasdk::tcp::ITCPEndpoint::SocketPointer socket);
+    void connectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket);
     void connectionFailed();
 
 private slots:
     void onConnectButtonClicked();
     void onConnectionFailed();
+    void onConnectionSucceed();
+    void setControlsEnabledStatus(bool status);
 
 private:
     boost::asio::io_service& ioService_;

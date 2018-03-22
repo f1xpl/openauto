@@ -59,7 +59,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="labelHeadUnitServerInfo">
    <property name="geometry">
     <rect>
      <x>60</x>
@@ -91,9 +91,9 @@
   <widget class="QPushButton" name="pushButtonCancel">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>40</x>
      <y>340</y>
-     <width>89</width>
+     <width>121</width>
      <height>41</height>
     </rect>
    </property>
@@ -104,9 +104,9 @@
   <widget class="QPushButton" name="pushButtonConnect">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>170</x>
      <y>340</y>
-     <width>89</width>
+     <width>121</width>
      <height>41</height>
     </rect>
    </property>
@@ -114,6 +114,43 @@
     <string>Connect</string>
    </property>
   </widget>
+  <widget class="QProgressBar" name="progressBarConnect">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>340</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>0</number>
+   </property>
+   <property name="value">
+    <number>0</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelConnecting">
+   <property name="geometry">
+    <rect>
+     <x>188</x>
+     <y>350</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connecting...</string>
+   </property>
+  </widget>
+  <zorder>groupBoxIPAddress</zorder>
+  <zorder>groupBoxRecent</zorder>
+  <zorder>labelHeadUnitServerInfo</zorder>
+  <zorder>labelCopyrightsInfoIcon</zorder>
+  <zorder>pushButtonCancel</zorder>
+  <zorder>progressBarConnect</zorder>
+  <zorder>labelConnecting</zorder>
+  <zorder>pushButtonConnect</zorder>
  </widget>
  <resources/>
  <connections/>
