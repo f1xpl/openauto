@@ -17,7 +17,7 @@
 */
 
 #include <QApplication>
-#include <f1x/openauto/autoapp/Projection/AudioInput.hpp>
+#include <f1x/openauto/autoapp/Projection/QtAudioInput.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace f1x
@@ -29,7 +29,7 @@ namespace autoapp
 namespace projection
 {
 
-AudioInput::AudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
+QtAudioInput::QtAudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
     : ioDevice_(nullptr)
 {
     qRegisterMetaType<IAudioInput::StartPromise::Pointer>("StartPromise::Pointer");
@@ -42,32 +42,32 @@ AudioInput::AudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t samp
     audioFormat_.setSampleType(QAudioFormat::SignedInt);
 
     this->moveToThread(QApplication::instance()->thread());
-    connect(this, &AudioInput::startRecording, this, &AudioInput::onStartRecording, Qt::QueuedConnection);
-    connect(this, &AudioInput::stopRecording, this, &AudioInput::onStopRecording, Qt::QueuedConnection);
+    connect(this, &QtAudioInput::startRecording, this, &QtAudioInput::onStartRecording, Qt::QueuedConnection);
+    connect(this, &QtAudioInput::stopRecording, this, &QtAudioInput::onStopRecording, Qt::QueuedConnection);
     QMetaObject::invokeMethod(this, "createAudioInput", Qt::BlockingQueuedConnection);
 }
 
-void AudioInput::createAudioInput()
+void QtAudioInput::createAudioInput()
 {
     OPENAUTO_LOG(debug) << "[AudioInput] create.";
     audioInput_ = (std::make_unique<QAudioInput>(QAudioDeviceInfo::defaultInputDevice(), audioFormat_));
 }
 
-bool AudioInput::open()
+bool QtAudioInput::open()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
     return ioDevice_ == nullptr;
 }
 
-bool AudioInput::isActive() const
+bool QtAudioInput::isActive() const
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
     return ioDevice_ != nullptr;
 }
 
-void AudioInput::read(ReadPromise::Pointer promise)
+void QtAudioInput::read(ReadPromise::Pointer promise)
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
@@ -85,32 +85,32 @@ void AudioInput::read(ReadPromise::Pointer promise)
     }
 }
 
-void AudioInput::start(StartPromise::Pointer promise)
+void QtAudioInput::start(StartPromise::Pointer promise)
 {
     emit startRecording(std::move(promise));
 }
 
-void AudioInput::stop()
+void QtAudioInput::stop()
 {
     emit stopRecording();
 }
 
-uint32_t AudioInput::getSampleSize() const
+uint32_t QtAudioInput::getSampleSize() const
 {
     return audioFormat_.sampleSize();
 }
 
-uint32_t AudioInput::getChannelCount() const
+uint32_t QtAudioInput::getChannelCount() const
 {
     return audioFormat_.channelCount();
 }
 
-uint32_t AudioInput::getSampleRate() const
+uint32_t QtAudioInput::getSampleRate() const
 {
     return audioFormat_.sampleRate();
 }
 
-void AudioInput::onStartRecording(StartPromise::Pointer promise)
+void QtAudioInput::onStartRecording(StartPromise::Pointer promise)
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
@@ -118,7 +118,7 @@ void AudioInput::onStartRecording(StartPromise::Pointer promise)
 
     if(ioDevice_ != nullptr)
     {
-        connect(ioDevice_, &QIODevice::readyRead, this, &AudioInput::onReadyRead, Qt::QueuedConnection);
+        connect(ioDevice_, &QIODevice::readyRead, this, &QtAudioInput::onReadyRead, Qt::QueuedConnection);
         promise->resolve();
     }
     else
@@ -127,7 +127,7 @@ void AudioInput::onStartRecording(StartPromise::Pointer promise)
     }
 }
 
-void AudioInput::onStopRecording()
+void QtAudioInput::onStopRecording()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
@@ -147,7 +147,7 @@ void AudioInput::onStopRecording()
     audioInput_->stop();
 }
 
-void AudioInput::onReadyRead()
+void QtAudioInput::onReadyRead()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 

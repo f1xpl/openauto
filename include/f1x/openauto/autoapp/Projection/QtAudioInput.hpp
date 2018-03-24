@@ -32,11 +32,11 @@ namespace autoapp
 namespace projection
 {
 
-class AudioInput: public QObject, public IAudioInput
+class QtAudioInput: public QObject, public IAudioInput
 {
     Q_OBJECT
 public:
-    AudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
+    QtAudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
 
     bool open() override;
     bool isActive() const override;
