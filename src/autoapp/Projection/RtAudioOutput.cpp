@@ -32,7 +32,6 @@ RtAudioOutput::RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_
     : channelCount_(channelCount)
     , sampleSize_(sampleSize)
     , sampleRate_(sampleRate)
-    , dac_()
 {
     try
     {
@@ -146,6 +145,8 @@ int RtAudioOutput::audioBufferReadHandler(void* outputBuffer, void* inputBuffer,
                                           double streamTime, RtAudioStreamStatus status, void* userData)
 {
     RtAudioOutput* self = static_cast<RtAudioOutput*>(userData);
+    std::lock_guard<decltype(self->mutex_)> lock(self->mutex_);
+
     const auto bufferSize = nBufferFrames * (self->sampleSize_ / 8) * self->channelCount_;
     self->audioBuffer_.read(reinterpret_cast<char*>(outputBuffer), bufferSize);
     return 0;
