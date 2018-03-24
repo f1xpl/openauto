@@ -32,25 +32,34 @@ RtAudioOutput::RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_
     : channelCount_(channelCount)
     , sampleSize_(sampleSize)
     , sampleRate_(sampleRate)
-    , playbackStarted_(false)
+    , dac_()
 {
+    try
+    {
+        dac_ = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
+    }
+    catch(...)
+    {
+        // fallback
+        dac_ = std::make_unique<RtAudio>();
+    }
 }
 
 bool RtAudioOutput::open()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
-    if(dac_.getDeviceCount() > 0)
+    if(dac_->getDeviceCount() > 0)
     {
         RtAudio::StreamParameters parameters;
-        parameters.deviceId = dac_.getDefaultOutputDevice();
+        parameters.deviceId = dac_->getDefaultOutputDevice();
         parameters.nChannels = channelCount_;
         parameters.firstChannel = 0;
 
         try
         {
-            uint32_t bufferFrames = 256;
-            dac_.openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this));
+            uint32_t bufferFrames = 1024;
+            dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this));
 
             return audioBuffer_.open(QIODevice::ReadWrite);
         }
@@ -76,11 +85,11 @@ void RtAudioOutput::start()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
-    if(dac_.isStreamOpen() && !dac_.isStreamRunning())
+    if(dac_->isStreamOpen() && !dac_->isStreamRunning())
     {
         try
         {
-            dac_.startStream();
+            dac_->startStream();
         }
         catch(const RtAudioError& e)
         {
@@ -95,9 +104,9 @@ void RtAudioOutput::stop()
 
     this->suspend();
 
-    if(dac_.isStreamOpen())
+    if(dac_->isStreamOpen())
     {
-        dac_.closeStream();
+        dac_->closeStream();
     }
 }
 
@@ -105,11 +114,11 @@ void RtAudioOutput::suspend()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
-    if(!dac_.isStreamOpen() && !dac_.isStreamRunning())
+    if(!dac_->isStreamOpen() && !dac_->isStreamRunning())
     {
         try
         {
-            dac_.stopStream();
+            dac_->stopStream();
         }
         catch(const RtAudioError& e)
         {

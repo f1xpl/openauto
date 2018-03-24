@@ -52,8 +52,7 @@ private:
     uint32_t sampleSize_;
     uint32_t sampleRate_;
     SequentialBuffer audioBuffer_;
-    bool playbackStarted_;
-    RtAudio dac_;
+    std::unique_ptr<RtAudio> dac_;
     std::mutex mutex_;
 };
 

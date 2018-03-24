@@ -72,13 +72,13 @@ ServiceList ServiceFactory::create(aasdk::messenger::IMessenger::Pointer messeng
 
     if(configuration_->speechAudioChannelEnabled())
     {
-        IAudioOutput::Pointer speechAudioOutput(new QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
-        //auto speechAudioOutput(std::make_shared<RtAudioOutput>(1, 16, 1600));
+        //IAudioOutput::Pointer speechAudioOutput(new QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+        auto speechAudioOutput(std::make_shared<RtAudioOutput>(1, 16, 16000));
         serviceList.emplace_back(std::make_shared<SpeechAudioService>(ioService_, messenger, std::move(speechAudioOutput)));
     }
 
-    IAudioOutput::Pointer systemAudioOutput(new QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
-    //auto systemAudioOutput(std::make_shared<RtAudioOutput>(1, 16, 1600));
+    //IAudioOutput::Pointer systemAudioOutput(new QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+    auto systemAudioOutput(std::make_shared<RtAudioOutput>(1, 16, 16000));
     serviceList.emplace_back(std::make_shared<SystemAudioService>(ioService_, messenger, std::move(systemAudioOutput)));
 
     serviceList.emplace_back(std::make_shared<SensorService>(ioService_, messenger));
