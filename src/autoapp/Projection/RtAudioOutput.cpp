@@ -58,7 +58,7 @@ bool RtAudioOutput::open()
 
         try
         {
-            uint32_t bufferFrames = 1024;
+            uint32_t bufferFrames = 128;
             dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this));
 
             return audioBuffer_.open(QIODevice::ReadWrite);
