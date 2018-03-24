@@ -93,6 +93,12 @@ void AudioService::onChannelOpenRequest(const aasdk::proto::messages::ChannelOpe
     OPENAUTO_LOG(info) << "[AudioService] open request"
                        << ", channel: " << aasdk::messenger::channelIdToString(channel_->getId())
                        << ", priority: " << request.priority();
+
+    OPENAUTO_LOG(debug) << "[AudioService] channel: " << aasdk::messenger::channelIdToString(channel_->getId())
+                        << " audio output sample rate: " << audioOutput_->getSampleRate()
+                        << ", sample size: " << audioOutput_->getSampleSize()
+                        << ", channel count: " << audioOutput_->getChannelCount();
+
     const aasdk::proto::enums::Status::Enum status = audioOutput_->open() ? aasdk::proto::enums::Status::OK : aasdk::proto::enums::Status::FAIL;
     OPENAUTO_LOG(info) << "[AudioService] open status: " << status
                        << ", channel: " << aasdk::messenger::channelIdToString(channel_->getId());
