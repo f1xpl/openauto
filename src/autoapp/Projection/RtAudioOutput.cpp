@@ -101,7 +101,7 @@ void RtAudioOutput::stop()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
-    this->suspend();
+    this->doSuspend();
 
     if(dac_->isStreamOpen())
     {
@@ -112,18 +112,7 @@ void RtAudioOutput::stop()
 void RtAudioOutput::suspend()
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);
-
-    if(!dac_->isStreamOpen() && !dac_->isStreamRunning())
-    {
-        try
-        {
-            dac_->stopStream();
-        }
-        catch(const RtAudioError& e)
-        {
-            OPENAUTO_LOG(error) << "[RtAudioOutput] Failed to suspend audio output, what: " << e.what();
-        }
-    }
+    this->doSuspend();
 }
 
 uint32_t RtAudioOutput::getSampleSize() const
@@ -139,6 +128,21 @@ uint32_t RtAudioOutput::getChannelCount() const
 uint32_t RtAudioOutput::getSampleRate() const
 {
     return sampleRate_;
+}
+
+void RtAudioOutput::doSuspend()
+{
+    if(!dac_->isStreamOpen() && !dac_->isStreamRunning())
+    {
+        try
+        {
+            dac_->stopStream();
+        }
+        catch(const RtAudioError& e)
+        {
+            OPENAUTO_LOG(error) << "[RtAudioOutput] Failed to suspend audio output, what: " << e.what();
+        }
+    }
 }
 
 int RtAudioOutput::audioBufferReadHandler(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,

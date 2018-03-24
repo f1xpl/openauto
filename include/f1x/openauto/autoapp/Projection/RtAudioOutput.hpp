@@ -45,6 +45,7 @@ public:
     uint32_t getSampleRate() const override;
 
 private:
+    void doSuspend();
     static int audioBufferReadHandler(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
                                       double streamTime, RtAudioStreamStatus status, void* userData);
 
