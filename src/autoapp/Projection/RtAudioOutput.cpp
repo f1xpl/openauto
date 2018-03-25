@@ -33,15 +33,9 @@ RtAudioOutput::RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_
     , sampleSize_(sampleSize)
     , sampleRate_(sampleRate)
 {
-    try
-    {
-        dac_ = std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
-    }
-    catch(...)
-    {
-        // fallback
-        dac_ = std::make_unique<RtAudio>();
-    }
+    std::vector<RtAudio::Api> apis;
+    RtAudio::getCompiledApi(apis);
+    dac_ = std::find(apis.begin(), apis.end(), RtAudio::LINUX_PULSE) == apis.end() ? std::make_unique<RtAudio>() : std::make_unique<RtAudio>(RtAudio::LINUX_PULSE);
 }
 
 bool RtAudioOutput::open()
@@ -57,9 +51,11 @@ bool RtAudioOutput::open()
 
         try
         {
-            uint32_t bufferFrames = 128;
-            dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this));
-
+            RtAudio::StreamOptions streamOptions;
+            streamOptions.numberOfBuffers = 1;
+            streamOptions.flags = RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_SCHEDULE_REALTIME;
+            uint32_t bufferFrames = 64;
+            dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this), &streamOptions);
             return audioBuffer_.open(QIODevice::ReadWrite);
         }
         catch(const RtAudioError& e)
