@@ -26,6 +26,7 @@
 #include <f1x/aasdk/TCP/TCPWrapper.hpp>
 #include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
+#include <f1x/openauto/autoapp/Configuration/RecentAddressesList.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
@@ -90,8 +91,11 @@ int main(int argc, char* argv[])
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    autoapp::configuration::RecentAddressesList recentAddressesList(5);
+    recentAddressesList.read();
+
     aasdk::tcp::TCPWrapper tcpWrapper;
-    autoapp::ui::ConnectDialog connectDialog(ioService, tcpWrapper);
+    autoapp::ui::ConnectDialog connectDialog(ioService, tcpWrapper, recentAddressesList);
     connectDialog.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });

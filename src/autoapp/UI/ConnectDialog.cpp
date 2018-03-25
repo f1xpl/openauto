@@ -19,6 +19,7 @@ ConnectDialog::ConnectDialog(boost::asio::io_service& ioService, aasdk::tcp::ITC
     , ui_(new Ui::ConnectDialog)
 {
     qRegisterMetaType<aasdk::tcp::ITCPEndpoint::SocketPointer>("aasdk::tcp::ITCPEndpoint::SocketPointer");
+    qRegisterMetaType<std::string>("std::string");
 
     ui_->setupUi(this);
     connect(ui_->pushButtonCancel, &QPushButton::clicked, this, &ConnectDialog::close);
@@ -26,8 +27,8 @@ ConnectDialog::ConnectDialog(boost::asio::io_service& ioService, aasdk::tcp::ITC
     connect(this, &ConnectDialog::connectionSucceed, this, &ConnectDialog::onConnectionSucceed);
     connect(this, &ConnectDialog::connectionFailed, this, &ConnectDialog::onConnectionFailed);
 
-    recentAddressesModel_.setStringList(recentAddressesModelList_);
     ui_->listViewRecent->setModel(&recentAddressesModel_);
+    this->loadRecentList();
 }
 
 ConnectDialog::~ConnectDialog()
@@ -52,7 +53,7 @@ void ConnectDialog::onConnectButtonClicked()
     }
 }
 
-void ConnectDialog::connectHandler(const boost::system::error_code& ec, std::string ipAddress, aasdk::tcp::ITCPEndpoint::SocketPointer socket)
+void ConnectDialog::connectHandler(const boost::system::error_code& ec, const std::string& ipAddress, aasdk::tcp::ITCPEndpoint::SocketPointer socket)
 {
     if(!ec)
     {
@@ -65,7 +66,7 @@ void ConnectDialog::connectHandler(const boost::system::error_code& ec, std::str
     }
 }
 
-void ConnectDialog::onConnectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer, std::string ipAddress)
+void ConnectDialog::onConnectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer, const std::string& ipAddress)
 {
     this->insertIpAddress(ipAddress);
     this->setControlsEnabledStatus(true);
@@ -90,16 +91,18 @@ void ConnectDialog::setControlsEnabledStatus(bool status)
 
 void ConnectDialog::loadRecentList()
 {
-    recentAddressesModelList_.clear();
+    QStringList stringList;
     const auto& configList = recentAddressesList_.getList();
 
     for(const auto& element : configList)
     {
-        recentAddressesModelList_.append(QString::fromStdString(element));
+        stringList.append(QString::fromStdString(element));
     }
+
+    recentAddressesModel_.setStringList(stringList);
 }
 
-void ConnectDialog::insertIpAddress(std::string ipAddress)
+void ConnectDialog::insertIpAddress(const std::string& ipAddress)
 {
     recentAddressesList_.insertAddress(ipAddress);
     this->loadRecentList();

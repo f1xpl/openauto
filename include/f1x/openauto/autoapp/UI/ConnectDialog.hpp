@@ -29,26 +29,25 @@ public:
 
 signals:
     void connectToDevice(const QString& ipAddress);
-    void connectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket, std::string ipAddress);
+    void connectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket, const std::string& ipAddress);
     void connectionFailed(const QString& message);
 
 private slots:
     void onConnectButtonClicked();
     void onConnectionFailed(const QString& message);
-    void onConnectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket, std::string ipAddress);
-    void setControlsEnabledStatus(bool status);
-    void connectHandler(const boost::system::error_code& ec, std::string ipAddress, aasdk::tcp::ITCPEndpoint::SocketPointer socket);
+    void onConnectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket, const std::string& ipAddress);
 
 private:
-    void insertIpAddress(std::string ipAddress);
+    void insertIpAddress(const std::string& ipAddress);
     void loadRecentList();
+    void setControlsEnabledStatus(bool status);
+    void connectHandler(const boost::system::error_code& ec, const std::string& ipAddress, aasdk::tcp::ITCPEndpoint::SocketPointer socket);
 
     boost::asio::io_service& ioService_;
     aasdk::tcp::ITCPWrapper& tcpWrapper_;
     openauto::autoapp::configuration::IRecentAddressesList& recentAddressesList_;
     Ui::ConnectDialog *ui_;
     QStringListModel recentAddressesModel_;
-    QStringList recentAddressesModelList_;
 };
 
 }
