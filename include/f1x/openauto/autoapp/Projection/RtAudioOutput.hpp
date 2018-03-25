@@ -55,6 +55,7 @@ private:
     SequentialBuffer audioBuffer_;
     std::unique_ptr<RtAudio> dac_;
     std::mutex mutex_;
+    bool playbackRequested_;
 };
 
 }

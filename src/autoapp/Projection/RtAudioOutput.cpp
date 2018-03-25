@@ -32,6 +32,7 @@ RtAudioOutput::RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_
     : channelCount_(channelCount)
     , sampleSize_(sampleSize)
     , sampleRate_(sampleRate)
+    , playbackRequested_(false)
 {
     std::vector<RtAudio::Api> apis;
     RtAudio::getCompiledApi(apis);
@@ -54,7 +55,7 @@ bool RtAudioOutput::open()
             RtAudio::StreamOptions streamOptions;
             streamOptions.numberOfBuffers = 1;
             streamOptions.flags = RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_SCHEDULE_REALTIME;
-            uint32_t bufferFrames = 64;
+            uint32_t bufferFrames = 256;
             dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this), &streamOptions);
             return audioBuffer_.open(QIODevice::ReadWrite);
         }
@@ -74,13 +75,10 @@ bool RtAudioOutput::open()
 void RtAudioOutput::write(const aasdk::common::DataConstBuffer& buffer)
 {
     audioBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
-}
 
-void RtAudioOutput::start()
-{
     std::lock_guard<decltype(mutex_)> lock(mutex_);
 
-    if(dac_->isStreamOpen() && !dac_->isStreamRunning())
+    if(playbackRequested_ && dac_->isStreamOpen() && !dac_->isStreamRunning())
     {
         try
         {
@@ -91,6 +89,15 @@ void RtAudioOutput::start()
             OPENAUTO_LOG(error) << "[RtAudioOutput] Failed to start audio output, what: " << e.what();
         }
     }
+
+    playbackRequested_ = false;
+}
+
+void RtAudioOutput::start()
+{
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
+    playbackRequested_ = true;
 }
 
 void RtAudioOutput::stop()
