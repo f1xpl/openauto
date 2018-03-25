@@ -70,9 +70,16 @@ bool RtAudioOutput::open()
     return false;
 }
 
-void RtAudioOutput::write(const aasdk::common::DataConstBuffer& buffer)
+void RtAudioOutput::write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer)
 {
     audioBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
+
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
+    if(dac_->isStreamOpen())
+    {
+        dac_->setStreamTime(timestamp / 1000000);
+    }
 }
 
 void RtAudioOutput::start()

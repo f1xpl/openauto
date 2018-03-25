@@ -36,7 +36,7 @@ class RtAudioOutput: public IAudioOutput
 public:
     RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
     bool open() override;
-    void write(const aasdk::common::DataConstBuffer& buffer) override;
+    void write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer) override;
     void start() override;
     void stop() override;
     void suspend() override;

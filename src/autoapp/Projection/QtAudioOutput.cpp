@@ -58,7 +58,7 @@ bool QtAudioOutput::open()
     return audioBuffer_.open(QIODevice::ReadWrite);
 }
 
-void QtAudioOutput::write(const aasdk::common::DataConstBuffer& buffer)
+void QtAudioOutput::write(aasdk::messenger::Timestamp::ValueType, const aasdk::common::DataConstBuffer& buffer)
 {
     audioBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
 }
