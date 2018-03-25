@@ -36,6 +36,7 @@ private slots:
     void onConnectButtonClicked();
     void onConnectionFailed(const QString& message);
     void onConnectionSucceed(aasdk::tcp::ITCPEndpoint::SocketPointer socket, const std::string& ipAddress);
+    void onRecentAddressClicked(const QModelIndex& index);
 
 private:
     void insertIpAddress(const std::string& ipAddress);

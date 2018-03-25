@@ -57,6 +57,9 @@
       <height>141</height>
      </rect>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
    </widget>
   </widget>
   <widget class="QLabel" name="labelHeadUnitServerInfo">

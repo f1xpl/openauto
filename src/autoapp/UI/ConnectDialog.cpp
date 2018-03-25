@@ -24,6 +24,7 @@ ConnectDialog::ConnectDialog(boost::asio::io_service& ioService, aasdk::tcp::ITC
     ui_->setupUi(this);
     connect(ui_->pushButtonCancel, &QPushButton::clicked, this, &ConnectDialog::close);
     connect(ui_->pushButtonConnect, &QPushButton::clicked, this, &ConnectDialog::onConnectButtonClicked);
+    connect(ui_->listViewRecent, &QListView::clicked, this, &ConnectDialog::onRecentAddressClicked);
     connect(this, &ConnectDialog::connectionSucceed, this, &ConnectDialog::onConnectionSucceed);
     connect(this, &ConnectDialog::connectionFailed, this, &ConnectDialog::onConnectionFailed);
 
@@ -79,6 +80,16 @@ void ConnectDialog::onConnectionFailed(const QString& message)
     QMessageBox errorMessage(QMessageBox::Critical, "Connect error", message, QMessageBox::Ok);
     errorMessage.setWindowFlags(Qt::WindowStaysOnTopHint);
     errorMessage.exec();
+}
+
+void ConnectDialog::onRecentAddressClicked(const QModelIndex& index)
+{
+    const auto& recentAddressesList = recentAddressesList_.getList();
+
+    if(static_cast<size_t>(index.row()) <= recentAddressesList.size())
+    {
+        ui_->lineEditIPAddress->setText(QString::fromStdString(recentAddressesList.at(index.row())));
+    }
 }
 
 void ConnectDialog::setControlsEnabledStatus(bool status)
