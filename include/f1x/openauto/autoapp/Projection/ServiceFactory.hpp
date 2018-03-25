@@ -40,6 +40,7 @@ private:
     IService::Pointer createVideoService(aasdk::messenger::IMessenger::Pointer messenger);
     IService::Pointer createBluetoothService(aasdk::messenger::IMessenger::Pointer messenger);
     IService::Pointer createInputService(aasdk::messenger::IMessenger::Pointer messenger);
+    void createAudioServices(ServiceList& serviceList, aasdk::messenger::IMessenger::Pointer messenger);
 
     boost::asio::io_service& ioService_;
     configuration::IConfiguration::Pointer configuration_;

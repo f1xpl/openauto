@@ -42,6 +42,7 @@ const std::string Configuration::cVideoMarginHeight = "Video.MarginHeight";
 
 const std::string Configuration::cAudioMusicAudioChannelEnabled = "Audio.MusicAudioChannelEnabled";
 const std::string Configuration::cAudioSpeechAudioChannelEnabled = "Audio.SpeechAudioChannelEnabled";
+const std::string Configuration::cAudioOutputBackendType = "Audio.OutputBackendType";
 
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
@@ -101,6 +102,7 @@ void Configuration::load()
 
         musicAudioChannelEnabled_ = iniConfig.get<bool>(cAudioMusicAudioChannelEnabled, true);
         speechAudiochannelEnabled_ = iniConfig.get<bool>(cAudioSpeechAudioChannelEnabled, true);
+        audioOutputBackendType_ = static_cast<AudioOutputBackendType>(iniConfig.get<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(AudioOutputBackendType::RTAUDIO)));
     }
     catch(const boost::property_tree::ini_parser_error& e)
     {
@@ -126,6 +128,7 @@ void Configuration::reset()
     bluetoothRemoteAdapterAddress_ = "";
     musicAudioChannelEnabled_ = true;
     speechAudiochannelEnabled_ = true;
+    audioOutputBackendType_ = AudioOutputBackendType::RTAUDIO;
 }
 
 void Configuration::save()
@@ -149,6 +152,7 @@ void Configuration::save()
 
     iniConfig.put<bool>(cAudioMusicAudioChannelEnabled, musicAudioChannelEnabled_);
     iniConfig.put<bool>(cAudioSpeechAudioChannelEnabled, speechAudiochannelEnabled_);
+    iniConfig.put<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(audioOutputBackendType_));
     boost::property_tree::ini_parser::write_ini(cConfigFileName, iniConfig);
 }
 
@@ -280,6 +284,16 @@ bool Configuration::speechAudioChannelEnabled() const
 void Configuration::setSpeechAudioChannelEnabled(bool value)
 {
     speechAudiochannelEnabled_ = value;
+}
+
+AudioOutputBackendType Configuration::getAudioOutputBackendType() const
+{
+    return audioOutputBackendType_;
+}
+
+void Configuration::setAudioOutputBackendType(AudioOutputBackendType value)
+{
+    audioOutputBackendType_ = value;
 }
 
 void Configuration::readButtonCodes(boost::property_tree::ptree& iniConfig)

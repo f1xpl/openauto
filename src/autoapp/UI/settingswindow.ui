@@ -486,6 +486,45 @@ color: rgb(238, 238, 236);</string>
       </property>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="groupBoxAudioOutputBackend">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>130</y>
+       <width>621</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Output backend</string>
+     </property>
+     <widget class="QRadioButton" name="radioButtonRtAudio">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>RT audio</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButtonQtAudio">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>30</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Qt</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QWidget" name="tabInput">
     <attribute name="title">
@@ -969,6 +1008,8 @@ color: rgb(238, 238, 236);</string>
   <tabstop>horizontalSliderScreenDPI</tabstop>
   <tabstop>checkBoxMusicAudioChannel</tabstop>
   <tabstop>checkBoxSpeechAudioChannel</tabstop>
+  <tabstop>radioButtonRtAudio</tabstop>
+  <tabstop>radioButtonQtAudio</tabstop>
   <tabstop>checkBoxEnableTouchscreen</tabstop>
   <tabstop>listWidgetButtons</tabstop>
   <tabstop>checkBoxPlayButton</tabstop>
