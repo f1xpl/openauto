@@ -25,6 +25,7 @@
 #include <aasdk_proto/ButtonCodeEnum.pb.h>
 #include <f1x/openauto/autoapp/Configuration/BluetootAdapterType.hpp>
 #include <f1x/openauto/autoapp/Configuration/HandednessOfTrafficType.hpp>
+#include <f1x/openauto/autoapp/Configuration/AudioOutputBackendType.hpp>
 
 namespace f1x
 {
@@ -77,6 +78,8 @@ public:
     virtual void setMusicAudioChannelEnabled(bool value) = 0;
     virtual bool speechAudioChannelEnabled() const = 0;
     virtual void setSpeechAudioChannelEnabled(bool value) = 0;
+    virtual AudioOutputBackendType getAudioOutputBackendType() const = 0;
+    virtual void setAudioOutputBackendType(AudioOutputBackendType value) = 0;
 };
 
 }

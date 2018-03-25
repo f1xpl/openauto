@@ -42,6 +42,7 @@ Copyrights (c) 2018 f1x.studio (Michal Szwaj)
  - [Boost libraries](http://www.boost.org/)
  - [Qt libraries](https://www.qt.io/)
  - [CMake](https://cmake.org/)
+ - [RtAudio](https://www.music.mcgill.ca/~gary/rtaudio/playback.html)
  - Broadcom ilclient from RaspberryPI 3 firmware
  - OpenMAX IL API
 

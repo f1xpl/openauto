@@ -17,7 +17,7 @@
 */
 
 #include <QApplication>
-#include <f1x/openauto/autoapp/Projection/AudioOutput.hpp>
+#include <f1x/openauto/autoapp/Projection/QtAudioOutput.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace f1x
@@ -29,7 +29,7 @@ namespace autoapp
 namespace projection
 {
 
-AudioOutput::AudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
+QtAudioOutput::QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
     : playbackStarted_(false)
 {
     audioFormat_.setChannelCount(channelCount);
@@ -40,63 +40,60 @@ AudioOutput::AudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sa
     audioFormat_.setSampleType(QAudioFormat::SignedInt);
 
     this->moveToThread(QApplication::instance()->thread());
-    connect(this, &AudioOutput::startPlayback, this, &AudioOutput::onStartPlayback);
-    connect(this, &AudioOutput::suspendPlayback, this, &AudioOutput::onSuspendPlayback);
-    connect(this, &AudioOutput::stopPlayback, this, &AudioOutput::onStopPlayback);
+    connect(this, &QtAudioOutput::startPlayback, this, &QtAudioOutput::onStartPlayback);
+    connect(this, &QtAudioOutput::suspendPlayback, this, &QtAudioOutput::onSuspendPlayback);
+    connect(this, &QtAudioOutput::stopPlayback, this, &QtAudioOutput::onStopPlayback);
 
     QMetaObject::invokeMethod(this, "createAudioOutput", Qt::BlockingQueuedConnection);
 }
 
-void AudioOutput::createAudioOutput()
+void QtAudioOutput::createAudioOutput()
 {
-    OPENAUTO_LOG(debug) << "[AudioOutput] create.";
+    OPENAUTO_LOG(debug) << "[QtAudioOutput] create.";
     audioOutput_ = std::make_unique<QAudioOutput>(QAudioDeviceInfo::defaultOutputDevice(), audioFormat_);
-
-    // Default volume level (max) produces crackles
-    audioOutput_->setVolume(static_cast<qreal>(0.90));
 }
 
-bool AudioOutput::open()
+bool QtAudioOutput::open()
 {
     return audioBuffer_.open(QIODevice::ReadWrite);
 }
 
-void AudioOutput::write(const aasdk::common::DataConstBuffer& buffer)
+void QtAudioOutput::write(aasdk::messenger::Timestamp::ValueType, const aasdk::common::DataConstBuffer& buffer)
 {
     audioBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
 }
 
-void AudioOutput::start()
+void QtAudioOutput::start()
 {
     emit startPlayback();
 }
 
-void AudioOutput::stop()
+void QtAudioOutput::stop()
 {
     emit stopPlayback();
 }
 
-void AudioOutput::suspend()
+void QtAudioOutput::suspend()
 {
     emit suspendPlayback();
 }
 
-uint32_t AudioOutput::getSampleSize() const
+uint32_t QtAudioOutput::getSampleSize() const
 {
     return audioFormat_.sampleSize();
 }
 
-uint32_t AudioOutput::getChannelCount() const
+uint32_t QtAudioOutput::getChannelCount() const
 {
     return audioFormat_.channelCount();
 }
 
-uint32_t AudioOutput::getSampleRate() const
+uint32_t QtAudioOutput::getSampleRate() const
 {
     return audioFormat_.sampleRate();
 }
 
-void AudioOutput::onStartPlayback()
+void QtAudioOutput::onStartPlayback()
 {
     if(!playbackStarted_)
     {
@@ -109,12 +106,12 @@ void AudioOutput::onStartPlayback()
     }
 }
 
-void AudioOutput::onSuspendPlayback()
+void QtAudioOutput::onSuspendPlayback()
 {
     audioOutput_->suspend();
 }
 
-void AudioOutput::onStopPlayback()
+void QtAudioOutput::onStopPlayback()
 {
     if(playbackStarted_)
     {

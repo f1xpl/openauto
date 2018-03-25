@@ -32,6 +32,7 @@ find_package(libusb-1.0 REQUIRED)
 find_package(Qt5 COMPONENTS Multimedia MultimediaWidgets Bluetooth)
 find_package(Protobuf REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(rtaudio REQUIRED)
 
 if(WIN32)
     set(WINSOCK2_LIBRARIES "ws2_32")
@@ -54,6 +55,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${LIBUSB_1_INCLUDE_DIRS}
                     ${PROTOBUF_INCLUDE_DIR}
                     ${OPENSSL_INCLUDE_DIR}
+                    ${RTAUDIO_INCLUDE_DIRS}
                     ${AASDK_PROTO_INCLUDE_DIRS}
                     ${AASDK_INCLUDE_DIRS}
                     ${BCM_HOST_INCLUDE_DIRS}
@@ -80,6 +82,7 @@ target_link_libraries(autoapp
                         ${BCM_HOST_LIBRARIES}
                         ${ILCLIENT_LIBRARIES}
                         ${WINSOCK2_LIBRARIES}
+                        ${RTAUDIO_LIBRARIES}
                         ${AASDK_PROTO_LIBRARIES}
                         ${AASDK_LIBRARIES})
 

@@ -18,35 +18,19 @@
 
 #pragma once
 
-#include <memory>
-#include <f1x/aasdk/Messenger/Timestamp.hpp>
-#include <f1x/aasdk/Common/Data.hpp>
-
 namespace f1x
 {
 namespace openauto
 {
 namespace autoapp
 {
-namespace projection
+namespace configuration
 {
 
-class IAudioOutput
+enum class AudioOutputBackendType
 {
-public:
-    typedef std::shared_ptr<IAudioOutput> Pointer;
-
-    IAudioOutput() = default;
-    virtual ~IAudioOutput() = default;
-
-    virtual bool open() = 0;
-    virtual void write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer) = 0;
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual void suspend() = 0;
-    virtual uint32_t getSampleSize() const = 0;
-    virtual uint32_t getChannelCount() const = 0;
-    virtual uint32_t getSampleRate() const = 0;
+    RTAUDIO,
+    QT
 };
 
 }
