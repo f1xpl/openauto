@@ -51,10 +51,8 @@ bool RtAudioOutput::open()
 
         try
         {
-            RtAudio::StreamOptions streamOptions;
-            streamOptions.flags = RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_SCHEDULE_REALTIME;
-            uint32_t bufferFrames = 256;
-            dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this), &streamOptions);
+            uint32_t bufferFrames = 128;
+            dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this), nullptr);
             return audioBuffer_.open(QIODevice::ReadWrite);
         }
         catch(const RtAudioError& e)
@@ -73,13 +71,6 @@ bool RtAudioOutput::open()
 void RtAudioOutput::write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer)
 {
     audioBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
-
-    std::lock_guard<decltype(mutex_)> lock(mutex_);
-
-    if(dac_->isStreamOpen())
-    {
-        dac_->setStreamTime(timestamp / 1000000);
-    }
 }
 
 void RtAudioOutput::start()
