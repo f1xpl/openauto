@@ -52,9 +52,8 @@ bool RtAudioOutput::open()
         try
         {
             RtAudio::StreamOptions streamOptions;
-            streamOptions.numberOfBuffers = 1;
             streamOptions.flags = RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_SCHEDULE_REALTIME;
-            uint32_t bufferFrames = 64;
+            uint32_t bufferFrames = 256;
             dac_->openStream(&parameters, nullptr, RTAUDIO_SINT16, sampleRate_, &bufferFrames, &RtAudioOutput::audioBufferReadHandler, static_cast<void*>(this), &streamOptions);
             return audioBuffer_.open(QIODevice::ReadWrite);
         }
