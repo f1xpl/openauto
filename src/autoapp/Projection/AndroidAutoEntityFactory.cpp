@@ -33,23 +33,19 @@ namespace autoapp
 namespace projection
 {
 
-AndroidAutoEntityFactory::AndroidAutoEntityFactory(aasdk::usb::IUSBWrapper& usbWrapper,
-                                                   boost::asio::io_service& ioService,
+AndroidAutoEntityFactory::AndroidAutoEntityFactory(boost::asio::io_service& ioService,
                                                    configuration::IConfiguration::Pointer configuration,
                                                    IServiceFactory& serviceFactory)
-    : usbWrapper_(usbWrapper)
-    , ioService_(ioService)
+    : ioService_(ioService)
     , configuration_(std::move(configuration))
     , serviceFactory_(serviceFactory)
 {
 
 }
 
-IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::usb::DeviceHandle deviceHandle)
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::usb::IAOAPDevice::Pointer aoapDevice)
 {
-    auto aoapDevice(aasdk::usb::AOAPDevice::create(usbWrapper_, ioService_, deviceHandle));
-    auto transport(std::make_shared<aasdk::transport::USBTransport>(ioService_, aoapDevice));
-
+    auto transport(std::make_shared<aasdk::transport::USBTransport>(ioService_, std::move(aoapDevice)));
     return create(std::move(transport));
 }
 

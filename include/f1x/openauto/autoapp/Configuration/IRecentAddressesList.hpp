@@ -16,9 +16,10 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include <f1x/openauto/autoapp/UI/MainWindow.hpp>
-#include "ui_mainwindow.h"
+#pragma once
+
+#include <deque>
+#include <string>
 
 namespace f1x
 {
@@ -26,24 +27,18 @@ namespace openauto
 {
 namespace autoapp
 {
-namespace ui
+namespace configuration
 {
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui_(new Ui::MainWindow)
+class IRecentAddressesList
 {
-    ui_->setupUi(this);
-    connect(ui_->pushButtonSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
-    connect(ui_->pushButtonExit, &QPushButton::clicked, this, &MainWindow::exit);
-    connect(ui_->pushButtonToggleCursor, &QPushButton::clicked, this, &MainWindow::toggleCursor);
-    connect(ui_->pushButtonWirelessConnection, &QPushButton::clicked, this, &MainWindow::openConnectDialog);
-}
+public:
+    typedef std::deque<std::string> RecentAddresses;
 
-MainWindow::~MainWindow()
-{
-    delete ui_;
-}
+    virtual void read() = 0;
+    virtual void insertAddress(const std::string& address) = 0;
+    virtual RecentAddresses getList() const = 0;
+};
 
 }
 }
