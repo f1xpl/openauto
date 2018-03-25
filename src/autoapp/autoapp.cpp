@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    autoapp::configuration::RecentAddressesList recentAddressesList(5);
+    autoapp::configuration::RecentAddressesList recentAddressesList(7);
     recentAddressesList.read();
 
     aasdk::tcp::TCPWrapper tcpWrapper;

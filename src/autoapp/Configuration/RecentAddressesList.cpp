@@ -46,11 +46,18 @@ void RecentAddressesList::read()
 
 void RecentAddressesList::insertAddress(const std::string& address)
 {
-    if(std::find(list_.begin(), list_.end(), address) == list_.end())
+    if(std::find(list_.begin(), list_.end(), address) != list_.end())
     {
-        list_.push_front(address);
-        this->save();
+        return;
     }
+
+    if(list_.size() >= maxListSize_)
+    {
+        list_.pop_back();
+    }
+
+    list_.push_front(address);
+    this->save();
 }
 
 RecentAddressesList::RecentAddresses RecentAddressesList::getList() const
