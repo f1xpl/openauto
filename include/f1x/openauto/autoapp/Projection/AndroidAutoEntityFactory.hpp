@@ -36,18 +36,16 @@ namespace projection
 class AndroidAutoEntityFactory: public IAndroidAutoEntityFactory
 {
 public:
-    AndroidAutoEntityFactory(aasdk::usb::IUSBWrapper& usbWrapper,
-                             boost::asio::io_service& ioService,
+    AndroidAutoEntityFactory(boost::asio::io_service& ioService,
                              configuration::IConfiguration::Pointer configuration,
                              IServiceFactory& serviceFactory);
 
-    IAndroidAutoEntity::Pointer create(aasdk::usb::DeviceHandle deviceHandle) override;
+    IAndroidAutoEntity::Pointer create(aasdk::usb::IAOAPDevice::Pointer aoapDevice) override;
     IAndroidAutoEntity::Pointer create(aasdk::tcp::ITCPEndpoint::Pointer tcpEndpoint) override;
 
 private:
     IAndroidAutoEntity::Pointer create(aasdk::transport::ITransport::Pointer transport);
 
-    aasdk::usb::IUSBWrapper& usbWrapper_;
     boost::asio::io_service& ioService_;
     configuration::IConfiguration::Pointer configuration_;
     IServiceFactory& serviceFactory_;

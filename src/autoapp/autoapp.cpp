@@ -18,10 +18,21 @@
 
 #include <thread>
 #include <QApplication>
+#include <f1x/aasdk/USB/USBHub.hpp>
+#include <f1x/aasdk/USB/ConnectedAccessoriesEnumerator.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryChain.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryChainFactory.hpp>
+#include <f1x/aasdk/USB/AccessoryModeQueryFactory.hpp>
+#include <f1x/aasdk/TCP/TCPWrapper.hpp>
+#include <f1x/openauto/autoapp/App.hpp>
+#include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
+#include <f1x/openauto/autoapp/Configuration/RecentAddressesList.hpp>
+#include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
+#include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
-#include <f1x/openauto/autoapp/Main.hpp>
+#include <f1x/openauto/autoapp/UI/ConnectDialog.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace aasdk = f1x::aasdk;
@@ -66,35 +77,54 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    QApplication qApplication(argc, argv);
     boost::asio::io_service ioService;
     boost::asio::io_service::work work(ioService);
+    std::vector<std::thread> threadPool;
+    startUSBWorkers(ioService, usbContext, threadPool);
+    startIOServiceWorkers(ioService, threadPool);
 
+    QApplication qApplication(argc, argv);
     autoapp::ui::MainWindow mainWindow;
     mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-    mainWindow.showFullScreen();
 
     auto configuration = std::make_shared<autoapp::configuration::Configuration>();
     autoapp::ui::SettingsWindow settingsWindow(configuration);
     settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    qApplication.setOverrideCursor(Qt::BlankCursor);
-    bool cursorVisible = false;
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&cursorVisible, &qApplication]() {
-        cursorVisible = !cursorVisible;
-        qApplication.setOverrideCursor(cursorVisible ? Qt::ArrowCursor : Qt::BlankCursor);
-    });
+    autoapp::configuration::RecentAddressesList recentAddressesList(7);
+    recentAddressesList.read();
 
-    aasdk::usb::USBWrapper usbWrapper(usbContext);
-    autoapp::Main main(usbWrapper, ioService, configuration);
+    aasdk::tcp::TCPWrapper tcpWrapper;
+    autoapp::ui::ConnectDialog connectDialog(ioService, tcpWrapper, recentAddressesList);
+    connectDialog.setWindowFlags(Qt::WindowStaysOnTopHint);
 
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { std::exit(0); });
     QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
+    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openConnectDialog, &connectDialog, &autoapp::ui::ConnectDialog::exec);
 
-    std::vector<std::thread> threadPool;
-    startUSBWorkers(ioService, usbContext, threadPool);
-    startIOServiceWorkers(ioService, threadPool);
-    main.start();
+    qApplication.setOverrideCursor(Qt::BlankCursor);
+    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::toggleCursor, [&qApplication]() {
+        const auto cursor = qApplication.overrideCursor()->shape() == Qt::BlankCursor ? Qt::ArrowCursor : Qt::BlankCursor;
+        qApplication.setOverrideCursor(cursor);
+    });
+
+    mainWindow.showFullScreen();
+
+    aasdk::usb::USBWrapper usbWrapper(usbContext);
+    aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
+    aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory(usbWrapper, ioService, queryFactory);
+    autoapp::projection::ServiceFactory serviceFactory(ioService, configuration);
+    autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(ioService, configuration, serviceFactory);
+
+    auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
+    auto connectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
+    auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(connectedAccessoriesEnumerator));
+
+    QObject::connect(&connectDialog, &autoapp::ui::ConnectDialog::connectionSucceed, [&app](auto socket) {
+        app->start(std::move(socket));
+    });
+
+    app->waitForUSBDevice();
 
     auto result = qApplication.exec();
     std::for_each(threadPool.begin(), threadPool.end(), std::bind(&std::thread::join, std::placeholders::_1));
