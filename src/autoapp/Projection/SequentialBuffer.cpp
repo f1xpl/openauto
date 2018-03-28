@@ -55,7 +55,8 @@ qint64 SequentialBuffer::readData(char *data, qint64 maxlen)
 
     const auto len = std::min<size_t>(maxlen, data_.size());
     std::copy(data_.begin(), data_.begin() + len, data);
-    data_.erase(data_.begin(), data_.begin() + len);
+    data_.erase_begin(len);
+
     return len;
 }
 
