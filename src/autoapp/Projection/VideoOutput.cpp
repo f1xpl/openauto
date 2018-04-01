@@ -48,6 +48,11 @@ size_t VideoOutput::getScreenDPI() const
     return configuration_->getScreenDPI();
 }
 
+QRect VideoOutput::getVideoMargins() const
+{
+    return configuration_->getVideoMargins();
+}
+
 }
 }
 }

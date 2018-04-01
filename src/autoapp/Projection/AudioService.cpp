@@ -93,6 +93,12 @@ void AudioService::onChannelOpenRequest(const aasdk::proto::messages::ChannelOpe
     OPENAUTO_LOG(info) << "[AudioService] open request"
                        << ", channel: " << aasdk::messenger::channelIdToString(channel_->getId())
                        << ", priority: " << request.priority();
+
+    OPENAUTO_LOG(debug) << "[AudioService] channel: " << aasdk::messenger::channelIdToString(channel_->getId())
+                        << " audio output sample rate: " << audioOutput_->getSampleRate()
+                        << ", sample size: " << audioOutput_->getSampleSize()
+                        << ", channel count: " << audioOutput_->getChannelCount();
+
     const aasdk::proto::enums::Status::Enum status = audioOutput_->open() ? aasdk::proto::enums::Status::OK : aasdk::proto::enums::Status::FAIL;
     OPENAUTO_LOG(info) << "[AudioService] open status: " << status
                        << ", channel: " << aasdk::messenger::channelIdToString(channel_->getId());
@@ -146,14 +152,9 @@ void AudioService::onAVChannelStopIndication(const aasdk::proto::messages::AVCha
     channel_->receive(this->shared_from_this());
 }
 
-void AudioService::onAVMediaWithTimestampIndication(aasdk::messenger::Timestamp::ValueType, const aasdk::common::DataConstBuffer& buffer)
+void AudioService::onAVMediaWithTimestampIndication(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer)
 {
-    this->onAVMediaIndication(buffer);
-}
-
-void AudioService::onAVMediaIndication(const aasdk::common::DataConstBuffer& buffer)
-{
-    audioOutput_->write(buffer);
+    audioOutput_->write(timestamp, buffer);
     aasdk::proto::messages::AVMediaAckIndication indication;
     indication.set_session(session_);
     indication.set_value(1);
@@ -162,6 +163,11 @@ void AudioService::onAVMediaIndication(const aasdk::common::DataConstBuffer& buf
     promise->then([]() {}, std::bind(&AudioService::onChannelError, this->shared_from_this(), std::placeholders::_1));
     channel_->sendAVMediaAckIndication(indication, std::move(promise));
     channel_->receive(this->shared_from_this());
+}
+
+void AudioService::onAVMediaIndication(const aasdk::common::DataConstBuffer& buffer)
+{
+    this->onAVMediaWithTimestampIndication(0, buffer);
 }
 
 void AudioService::onChannelError(const aasdk::error::Error& e)

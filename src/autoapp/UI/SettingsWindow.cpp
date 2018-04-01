@@ -73,6 +73,10 @@ void SettingsWindow::onSave()
 
     configuration_->setScreenDPI(static_cast<size_t>(ui_->horizontalSliderScreenDPI->value()));
     configuration_->setOMXLayerIndex(ui_->spinBoxOmxLayerIndex->value());
+
+    QRect videoMargins(0, 0, ui_->spinBoxVideoMarginWidth->value(), ui_->spinBoxVideoMarginHeight->value());
+    configuration_->setVideoMargins(std::move(videoMargins));
+
     configuration_->setTouchscreenEnabled(ui_->checkBoxEnableTouchscreen->isChecked());
     this->saveButtonCheckBoxes();
 
@@ -93,6 +97,7 @@ void SettingsWindow::onSave()
 
     configuration_->setMusicAudioChannelEnabled(ui_->checkBoxMusicAudioChannel->isChecked());
     configuration_->setSpeechAudioChannelEnabled(ui_->checkBoxSpeechAudioChannel->isChecked());
+    configuration_->setAudioOutputBackendType(ui_->radioButtonRtAudio->isChecked() ? configuration::AudioOutputBackendType::RTAUDIO : configuration::AudioOutputBackendType::QT);
 
     configuration_->save();
     this->close();
@@ -130,6 +135,10 @@ void SettingsWindow::load()
     ui_->horizontalSliderScreenDPI->setValue(static_cast<int>(configuration_->getScreenDPI()));
     ui_->spinBoxOmxLayerIndex->setValue(configuration_->getOMXLayerIndex());
 
+    const auto& videoMargins = configuration_->getVideoMargins();
+    ui_->spinBoxVideoMarginWidth->setValue(videoMargins.width());
+    ui_->spinBoxVideoMarginHeight->setValue(videoMargins.height());
+
     ui_->checkBoxEnableTouchscreen->setChecked(configuration_->getTouchscreenEnabled());
     this->loadButtonCheckBoxes();
 
@@ -141,6 +150,10 @@ void SettingsWindow::load()
 
     ui_->checkBoxMusicAudioChannel->setChecked(configuration_->musicAudioChannelEnabled());
     ui_->checkBoxSpeechAudioChannel->setChecked(configuration_->speechAudioChannelEnabled());
+
+    const auto& audioOutputBackendType = configuration_->getAudioOutputBackendType();
+    ui_->radioButtonRtAudio->setChecked(audioOutputBackendType == configuration::AudioOutputBackendType::RTAUDIO);
+    ui_->radioButtonQtAudio->setChecked(audioOutputBackendType == configuration::AudioOutputBackendType::QT);
 }
 
 void SettingsWindow::loadButtonCheckBoxes()

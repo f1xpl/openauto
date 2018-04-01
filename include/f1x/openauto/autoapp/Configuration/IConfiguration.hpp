@@ -19,11 +19,13 @@
 #pragma once
 
 #include <string>
+#include <QRect>
 #include <aasdk_proto/VideoFPSEnum.pb.h>
 #include <aasdk_proto/VideoResolutionEnum.pb.h>
 #include <aasdk_proto/ButtonCodeEnum.pb.h>
 #include <f1x/openauto/autoapp/Configuration/BluetootAdapterType.hpp>
 #include <f1x/openauto/autoapp/Configuration/HandednessOfTrafficType.hpp>
+#include <f1x/openauto/autoapp/Configuration/AudioOutputBackendType.hpp>
 
 namespace f1x
 {
@@ -59,6 +61,8 @@ public:
     virtual void setScreenDPI(size_t value) = 0;
     virtual void setOMXLayerIndex(int32_t value) = 0;
     virtual int32_t getOMXLayerIndex() const = 0;
+    virtual void setVideoMargins(QRect value) = 0;
+    virtual QRect getVideoMargins() const = 0;
 
     virtual bool getTouchscreenEnabled() const = 0;
     virtual void setTouchscreenEnabled(bool value) = 0;
@@ -74,6 +78,8 @@ public:
     virtual void setMusicAudioChannelEnabled(bool value) = 0;
     virtual bool speechAudioChannelEnabled() const = 0;
     virtual void setSpeechAudioChannelEnabled(bool value) = 0;
+    virtual AudioOutputBackendType getAudioOutputBackendType() const = 0;
+    virtual void setAudioOutputBackendType(AudioOutputBackendType value) = 0;
 };
 
 }

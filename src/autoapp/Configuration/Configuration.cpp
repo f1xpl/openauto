@@ -37,9 +37,12 @@ const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
 const std::string Configuration::cVideoOMXLayerIndexKey = "Video.OMXLayerIndex";
+const std::string Configuration::cVideoMarginWidth = "Video.MarginWidth";
+const std::string Configuration::cVideoMarginHeight = "Video.MarginHeight";
 
 const std::string Configuration::cAudioMusicAudioChannelEnabled = "Audio.MusicAudioChannelEnabled";
 const std::string Configuration::cAudioSpeechAudioChannelEnabled = "Audio.SpeechAudioChannelEnabled";
+const std::string Configuration::cAudioOutputBackendType = "Audio.OutputBackendType";
 
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
@@ -87,6 +90,7 @@ void Configuration::load()
         screenDPI_ = iniConfig.get<size_t>(cVideoScreenDPIKey, 140);
 
         omxLayerIndex_ = iniConfig.get<int32_t>(cVideoOMXLayerIndexKey, 1);
+        videoMargins_ = QRect(0, 0, iniConfig.get<int32_t>(cVideoMarginWidth, 0), iniConfig.get<int32_t>(cVideoMarginHeight, 0));
 
         enableTouchscreen_ = iniConfig.get<bool>(cInputEnableTouchscreenKey, true);
         this->readButtonCodes(iniConfig);
@@ -98,6 +102,7 @@ void Configuration::load()
 
         musicAudioChannelEnabled_ = iniConfig.get<bool>(cAudioMusicAudioChannelEnabled, true);
         speechAudiochannelEnabled_ = iniConfig.get<bool>(cAudioSpeechAudioChannelEnabled, true);
+        audioOutputBackendType_ = static_cast<AudioOutputBackendType>(iniConfig.get<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(AudioOutputBackendType::RTAUDIO)));
     }
     catch(const boost::property_tree::ini_parser_error& e)
     {
@@ -116,12 +121,14 @@ void Configuration::reset()
     videoResolution_ = aasdk::proto::enums::VideoResolution::_480p;
     screenDPI_ = 140;
     omxLayerIndex_ = 1;
+    videoMargins_ = QRect(0, 0, 0, 0);
     enableTouchscreen_ = true;
     buttonCodes_.clear();
     bluetoothAdapterType_ = BluetoothAdapterType::NONE;
     bluetoothRemoteAdapterAddress_ = "";
     musicAudioChannelEnabled_ = true;
     speechAudiochannelEnabled_ = true;
+    audioOutputBackendType_ = AudioOutputBackendType::RTAUDIO;
 }
 
 void Configuration::save()
@@ -134,6 +141,8 @@ void Configuration::save()
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
     iniConfig.put<size_t>(cVideoScreenDPIKey, screenDPI_);
     iniConfig.put<int32_t>(cVideoOMXLayerIndexKey, omxLayerIndex_);
+    iniConfig.put<uint32_t>(cVideoMarginWidth, videoMargins_.width());
+    iniConfig.put<uint32_t>(cVideoMarginHeight, videoMargins_.height());
 
     iniConfig.put<bool>(cInputEnableTouchscreenKey, enableTouchscreen_);
     this->writeButtonCodes(iniConfig);
@@ -143,6 +152,7 @@ void Configuration::save()
 
     iniConfig.put<bool>(cAudioMusicAudioChannelEnabled, musicAudioChannelEnabled_);
     iniConfig.put<bool>(cAudioSpeechAudioChannelEnabled, speechAudiochannelEnabled_);
+    iniConfig.put<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(audioOutputBackendType_));
     boost::property_tree::ini_parser::write_ini(cConfigFileName, iniConfig);
 }
 
@@ -206,6 +216,16 @@ int32_t Configuration::getOMXLayerIndex() const
     return omxLayerIndex_;
 }
 
+void Configuration::setVideoMargins(QRect value)
+{
+    videoMargins_ = value;
+}
+
+QRect Configuration::getVideoMargins() const
+{
+    return videoMargins_;
+}
+
 bool Configuration::getTouchscreenEnabled() const
 {
     return enableTouchscreen_;
@@ -264,6 +284,16 @@ bool Configuration::speechAudioChannelEnabled() const
 void Configuration::setSpeechAudioChannelEnabled(bool value)
 {
     speechAudiochannelEnabled_ = value;
+}
+
+AudioOutputBackendType Configuration::getAudioOutputBackendType() const
+{
+    return audioOutputBackendType_;
+}
+
+void Configuration::setAudioOutputBackendType(AudioOutputBackendType value)
+{
+    audioOutputBackendType_ = value;
 }
 
 void Configuration::readButtonCodes(boost::property_tree::ptree& iniConfig)

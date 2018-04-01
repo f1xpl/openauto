@@ -19,6 +19,7 @@
 #include <f1x/aasdk/USB/AOAPDevice.hpp>
 #include <f1x/aasdk/Transport/SSLWrapper.hpp>
 #include <f1x/aasdk/Transport/USBTransport.hpp>
+#include <f1x/aasdk/Transport/TCPTransport.hpp>
 #include <f1x/aasdk/Messenger/Cryptor.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntity.hpp>
@@ -32,23 +33,30 @@ namespace autoapp
 namespace projection
 {
 
-AndroidAutoEntityFactory::AndroidAutoEntityFactory(aasdk::usb::IUSBWrapper& usbWrapper,
-                                                   boost::asio::io_service& ioService,
+AndroidAutoEntityFactory::AndroidAutoEntityFactory(boost::asio::io_service& ioService,
                                                    configuration::IConfiguration::Pointer configuration,
                                                    IServiceFactory& serviceFactory)
-    : usbWrapper_(usbWrapper)
-    , ioService_(ioService)
+    : ioService_(ioService)
     , configuration_(std::move(configuration))
     , serviceFactory_(serviceFactory)
 {
 
 }
 
-IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::usb::DeviceHandle deviceHandle)
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::usb::IAOAPDevice::Pointer aoapDevice)
 {
-    auto aoapDevice(aasdk::usb::AOAPDevice::create(usbWrapper_, ioService_, deviceHandle));
-    auto transport(std::make_shared<aasdk::transport::USBTransport>(ioService_, aoapDevice));
+    auto transport(std::make_shared<aasdk::transport::USBTransport>(ioService_, std::move(aoapDevice)));
+    return create(std::move(transport));
+}
 
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::tcp::ITCPEndpoint::Pointer tcpEndpoint)
+{
+    auto transport(std::make_shared<aasdk::transport::TCPTransport>(ioService_, std::move(tcpEndpoint)));
+    return create(std::move(transport));
+}
+
+IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::transport::ITransport::Pointer transport)
+{
     auto sslWrapper(std::make_shared<aasdk::transport::SSLWrapper>());
     auto cryptor(std::make_shared<aasdk::messenger::Cryptor>(std::move(sslWrapper)));
 

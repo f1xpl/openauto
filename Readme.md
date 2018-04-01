@@ -22,6 +22,8 @@ OpenAuto is an AndroidAuto(tm) headunit emulator based on aasdk library and Qt l
  - Touchscreen and buttons input
  - Bluetooth
  - Automatic launch after device hotplug
+ - Automatic detection of connected Android devices
+ - Wireless (WiFi) mode via head unit server (must be enabled in hidden developer settings)
  - User-friendly settings
 
 ### Supported platforms
@@ -42,6 +44,7 @@ Copyrights (c) 2018 f1x.studio (Michal Szwaj)
  - [Boost libraries](http://www.boost.org/)
  - [Qt libraries](https://www.qt.io/)
  - [CMake](https://cmake.org/)
+ - [RtAudio](https://www.music.mcgill.ca/~gary/rtaudio/playback.html)
  - Broadcom ilclient from RaspberryPI 3 firmware
  - OpenMAX IL API
 

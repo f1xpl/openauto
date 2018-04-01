@@ -32,14 +32,14 @@ namespace autoapp
 namespace projection
 {
 
-class AudioOutput: public QObject, public IAudioOutput
+class QtAudioOutput: public QObject, public IAudioOutput
 {
     Q_OBJECT
 
 public:
-    AudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
+    QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
     bool open() override;
-    void write(const aasdk::common::DataConstBuffer& buffer) override;
+    void write(aasdk::messenger::Timestamp::ValueType, const aasdk::common::DataConstBuffer& buffer) override;
     void start() override;
     void stop() override;
     void suspend() override;

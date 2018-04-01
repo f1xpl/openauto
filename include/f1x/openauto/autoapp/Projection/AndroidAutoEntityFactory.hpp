@@ -19,6 +19,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
+#include <f1x/aasdk/Transport/ITransport.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/IServiceFactory.hpp>
@@ -35,15 +36,16 @@ namespace projection
 class AndroidAutoEntityFactory: public IAndroidAutoEntityFactory
 {
 public:
-    AndroidAutoEntityFactory(aasdk::usb::IUSBWrapper& usbWrapper,
-                             boost::asio::io_service& ioService,
+    AndroidAutoEntityFactory(boost::asio::io_service& ioService,
                              configuration::IConfiguration::Pointer configuration,
                              IServiceFactory& serviceFactory);
 
-    IAndroidAutoEntity::Pointer create(aasdk::usb::DeviceHandle deviceHandle) override;
+    IAndroidAutoEntity::Pointer create(aasdk::usb::IAOAPDevice::Pointer aoapDevice) override;
+    IAndroidAutoEntity::Pointer create(aasdk::tcp::ITCPEndpoint::Pointer tcpEndpoint) override;
 
 private:
-    aasdk::usb::IUSBWrapper& usbWrapper_;
+    IAndroidAutoEntity::Pointer create(aasdk::transport::ITransport::Pointer transport);
+
     boost::asio::io_service& ioService_;
     configuration::IConfiguration::Pointer configuration_;
     IServiceFactory& serviceFactory_;

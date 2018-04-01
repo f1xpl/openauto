@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConnectDialog</class>
+ <widget class="QDialog" name="ConnectDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>301</width>
+    <height>389</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Connect to device</string>
+  </property>
+  <widget class="QGroupBox" name="groupBoxIPAddress">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>281</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>IP Address</string>
+   </property>
+   <widget class="QLineEdit" name="lineEditIPAddress">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBoxRecent">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>281</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Recent</string>
+   </property>
+   <widget class="QListView" name="listViewRecent">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>261</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="labelHeadUnitServerInfo">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>260</y>
+     <width>221</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;In order to use wireless mode you must enable head unit server in developer settings.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelCopyrightsInfoIcon">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>290</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/ico_info.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonCancel">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>340</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonConnect">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>340</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="progressBarConnect">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>340</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>0</number>
+   </property>
+   <property name="value">
+    <number>0</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelConnecting">
+   <property name="geometry">
+    <rect>
+     <x>188</x>
+     <y>350</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connecting...</string>
+   </property>
+  </widget>
+  <zorder>groupBoxIPAddress</zorder>
+  <zorder>groupBoxRecent</zorder>
+  <zorder>labelHeadUnitServerInfo</zorder>
+  <zorder>labelCopyrightsInfoIcon</zorder>
+  <zorder>pushButtonCancel</zorder>
+  <zorder>progressBarConnect</zorder>
+  <zorder>labelConnecting</zorder>
+  <zorder>pushButtonConnect</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

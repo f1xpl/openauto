@@ -18,10 +18,9 @@
 
 #pragma once
 
-#include <mutex>
-#include <QAudioInput>
-#include <QAudioFormat>
-#include <f1x/openauto/autoapp/Projection/IAudioInput.hpp>
+#include <RtAudio.h>
+#include <f1x/openauto/autoapp/Projection/IAudioOutput.hpp>
+#include <f1x/openauto/autoapp/Projection/SequentialBuffer.hpp>
 
 namespace f1x
 {
@@ -32,39 +31,30 @@ namespace autoapp
 namespace projection
 {
 
-class AudioInput: public QObject, public IAudioInput
+class RtAudioOutput: public IAudioOutput
 {
-    Q_OBJECT
 public:
-    AudioInput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
-
+    RtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
     bool open() override;
-    bool isActive() const override;
-    void read(ReadPromise::Pointer promise) override;
-    void start(StartPromise::Pointer promise) override;
+    void write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer) override;
+    void start() override;
     void stop() override;
+    void suspend() override;
     uint32_t getSampleSize() const override;
     uint32_t getChannelCount() const override;
     uint32_t getSampleRate() const override;
 
-signals:
-    void startRecording(StartPromise::Pointer promise);
-    void stopRecording();
-
-private slots:
-    void createAudioInput();
-    void onStartRecording(StartPromise::Pointer promise);
-    void onStopRecording();
-    void onReadyRead();
-
 private:
-    QAudioFormat audioFormat_;
-    QIODevice* ioDevice_;
-    std::unique_ptr<QAudioInput> audioInput_;
-    ReadPromise::Pointer readPromise_;
-    mutable std::mutex mutex_;
+    void doSuspend();
+    static int audioBufferReadHandler(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
+                                      double streamTime, RtAudioStreamStatus status, void* userData);
 
-    static constexpr size_t cSampleSize = 2056;
+    uint32_t channelCount_;
+    uint32_t sampleSize_;
+    uint32_t sampleRate_;
+    SequentialBuffer audioBuffer_;
+    std::unique_ptr<RtAudio> dac_;
+    std::mutex mutex_;
 };
 
 }

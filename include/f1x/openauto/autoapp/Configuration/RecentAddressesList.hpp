@@ -16,24 +16,42 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <f1x/openauto/autoapp/USB/USBMain.hpp>
-#include <f1x/openauto/Common/Log.hpp>
+#pragma once
 
-namespace aasdk = f1x::aasdk;
-namespace autoapp = f1x::openauto::autoapp;
+#include <deque>
+#include <f1x/openauto/autoapp/Configuration/IRecentAddressesList.hpp>
 
-int main(int argc, char* argv[])
+namespace f1x
 {
-    libusb_context* context;
-    if(libusb_init(&context) != 0)
-    {
-        OPENAUTO_LOG(error) << "[OpenAuto] libusb init failed.";
-        return 1;
-    }
+namespace openauto
+{
+namespace autoapp
+{
+namespace configuration
+{
 
-    autoapp::usb::USBMain main(context);
-    auto result = main.exec(argc, argv);
+class RecentAddressesList: public IRecentAddressesList
+{
+public:
+    RecentAddressesList(size_t maxListSize);
 
-    libusb_exit(context);
-    return result;
+    void read() override;
+    void insertAddress(const std::string& address) override;
+    RecentAddresses getList() const override;
+
+private:
+    void load();
+    void save();
+
+    size_t maxListSize_;
+    RecentAddresses list_;
+
+    static const std::string cConfigFileName;
+    static const std::string cRecentEntiresCount;
+    static const std::string cRecentEntryPrefix;
+};
+
+}
+}
+}
 }

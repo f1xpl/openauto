@@ -144,8 +144,10 @@ void VideoService::fillFeatures(aasdk::proto::messages::ServiceDiscoveryResponse
     auto* videoConfig1 = videoChannel->add_video_configs();
     videoConfig1->set_video_resolution(videoOutput_->getVideoResolution());
     videoConfig1->set_video_fps(videoOutput_->getVideoFPS());
-    videoConfig1->set_margin_height(0);
-    videoConfig1->set_margin_width(0);
+
+    const auto& videoMargins = videoOutput_->getVideoMargins();
+    videoConfig1->set_margin_height(videoMargins.height());
+    videoConfig1->set_margin_width(videoMargins.width());
     videoConfig1->set_dpi(videoOutput_->getScreenDPI());
 }
 

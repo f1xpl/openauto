@@ -19,6 +19,10 @@
 #pragma once
 
 #include <f1x/aasdk/USB/IUSBHub.hpp>
+#include <f1x/aasdk/USB/IConnectedAccessoriesEnumerator.hpp>
+#include <f1x/aasdk/USB/USBWrapper.hpp>
+#include <f1x/aasdk/TCP/ITCPWrapper.hpp>
+#include <f1x/aasdk/TCP/ITCPEndpoint.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntityEventHandler.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntityFactory.hpp>
 
@@ -28,36 +32,39 @@ namespace openauto
 {
 namespace autoapp
 {
-namespace usb
-{
 
-class USBApp: public projection::IAndroidAutoEntityEventHandler, public std::enable_shared_from_this<USBApp>
+class App: public projection::IAndroidAutoEntityEventHandler, public std::enable_shared_from_this<App>
 {
 public:
-    typedef std::shared_ptr<USBApp> Pointer;
+    typedef std::shared_ptr<App> Pointer;
 
-    USBApp(boost::asio::io_service& ioService, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory, aasdk::usb::IUSBHub::Pointer usbHub);
+    App(boost::asio::io_service& ioService, aasdk::usb::USBWrapper& usbWrapper, aasdk::tcp::ITCPWrapper& tcpWrapper, projection::IAndroidAutoEntityFactory& androidAutoEntityFactory,
+        aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
 
-    void start();
+    void waitForUSBDevice();
+    void start(aasdk::tcp::ITCPEndpoint::SocketPointer socket);
     void stop();
     void onAndroidAutoQuit() override;
 
 private:
-    using std::enable_shared_from_this<USBApp>::shared_from_this;
+    using std::enable_shared_from_this<App>::shared_from_this;
 
+    void enumerateDevices();
     void waitForDevice();
     void aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle);
     void onUSBHubError(const aasdk::error::Error& error);
 
     boost::asio::io_service& ioService_;
+    aasdk::usb::USBWrapper& usbWrapper_;
+    aasdk::tcp::ITCPWrapper& tcpWrapper_;
     boost::asio::io_service::strand strand_;
     projection::IAndroidAutoEntityFactory& androidAutoEntityFactory_;
     aasdk::usb::IUSBHub::Pointer usbHub_;
+    aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator_;
     projection::IAndroidAutoEntity::Pointer androidAutoEntity_;
     bool isStopped_;
 };
 
-}
 }
 }
 }
