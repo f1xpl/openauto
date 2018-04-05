@@ -165,8 +165,8 @@ void App::onUSBHubError(const aasdk::error::Error& error)
 {
     OPENAUTO_LOG(error) << "[App] usb hub error: " << error.what();
 
-    if(error.getCode() != aasdk::error::ErrorCode::OPERATION_ABORTED &&
-       error.getCode() != aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
+    if(error != aasdk::error::ErrorCode::OPERATION_ABORTED &&
+       error != aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
     {
         this->waitForDevice();
     }

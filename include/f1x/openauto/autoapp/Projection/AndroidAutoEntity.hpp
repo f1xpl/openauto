@@ -26,6 +26,7 @@
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntity.hpp>
 #include <f1x/openauto/autoapp/Projection/IServiceFactory.hpp>
+#include <f1x/openauto/autoapp/Projection/IPinger.hpp>
 
 namespace f1x
 {
@@ -43,7 +44,8 @@ public:
                       aasdk::messenger::ICryptor::Pointer cryptor,
                       aasdk::transport::ITransport::Pointer transport,
                       configuration::IConfiguration::Pointer configuration,
-                      IServiceFactory& serviceFactory);
+                      IServiceFactory& serviceFactory,
+                      IPinger::Pointer pinger);
     ~AndroidAutoEntity() override;
 
     void start(IAndroidAutoEntityEventHandler& eventHandler) override;
@@ -55,17 +57,20 @@ public:
     void onShutdownRequest(const aasdk::proto::messages::ShutdownRequest& request) override;
     void onShutdownResponse(const aasdk::proto::messages::ShutdownResponse& response) override;
     void onNavigationFocusRequest(const aasdk::proto::messages::NavigationFocusRequest& request) override;
+    void onPingResponse(const aasdk::proto::messages::PingResponse& response) override;
     void onChannelError(const aasdk::error::Error& e) override;
 
 private:
     using std::enable_shared_from_this<AndroidAutoEntity>::shared_from_this;
     void triggerQuit();
+    void ping();
 
     boost::asio::io_service::strand strand_;
     aasdk::messenger::ICryptor::Pointer cryptor_;
     aasdk::transport::ITransport::Pointer transport_;
     configuration::IConfiguration::Pointer configuration_;
     IServiceFactory& serviceFactory_;
+    IPinger::Pointer pinger_;
     aasdk::messenger::IMessenger::Pointer messenger_;
     aasdk::channel::control::ControlServiceChannel::Pointer controlServiceChannel_;
     ServiceList serviceList_;

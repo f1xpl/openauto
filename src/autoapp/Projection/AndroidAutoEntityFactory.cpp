@@ -23,6 +23,7 @@
 #include <f1x/aasdk/Messenger/Cryptor.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntity.hpp>
+#include <f1x/openauto/autoapp/Projection/Pinger.hpp>
 
 namespace f1x
 {
@@ -59,8 +60,9 @@ IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::transport::I
 {
     auto sslWrapper(std::make_shared<aasdk::transport::SSLWrapper>());
     auto cryptor(std::make_shared<aasdk::messenger::Cryptor>(std::move(sslWrapper)));
+    auto pinger(std::make_shared<Pinger>(ioService_, 5000));
 
-    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), configuration_, serviceFactory_);
+    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), configuration_, serviceFactory_, std::move(pinger));
 }
 
 }
