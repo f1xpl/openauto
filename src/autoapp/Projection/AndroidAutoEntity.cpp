@@ -79,8 +79,8 @@ void AndroidAutoEntity::stop()
     strand_.dispatch([this, self = this->shared_from_this()]() {
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] stop.";
 
+        pinger_->cancel();
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::stop, std::placeholders::_1));
-
         messenger_->stop();
         cryptor_->deinit();
         transport_->stop();
@@ -145,6 +145,7 @@ void AndroidAutoEntity::onHandshake(const aasdk::common::DataConstBuffer& payloa
             auto authCompletePromise = aasdk::channel::SendPromise::defer(strand_);
             authCompletePromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
             controlServiceChannel_->sendAuthComplete(authCompleteIndication, std::move(authCompletePromise));
+            this->ping();
         }
 
         controlServiceChannel_->receive(this->shared_from_this());
@@ -180,8 +181,6 @@ void AndroidAutoEntity::onServiceDiscoveryRequest(const aasdk::proto::messages::
     promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
     controlServiceChannel_->sendServiceDiscoveryResponse(serviceDiscoveryResponse, std::move(promise));
     controlServiceChannel_->receive(this->shared_from_this());
-
-    this->ping();
 }
 
 void AndroidAutoEntity::onAudioFocusRequest(const aasdk::proto::messages::AudioFocusRequest& request)
@@ -237,8 +236,6 @@ void AndroidAutoEntity::onNavigationFocusRequest(const aasdk::proto::messages::N
 
 void AndroidAutoEntity::onPingResponse(const aasdk::proto::messages::PingResponse&)
 {
-    OPENAUTO_LOG(info) << "[AndroidAutoEntity] ping response";
-
     pinger_->pong();
     controlServiceChannel_->receive(this->shared_from_this());
 }
@@ -266,7 +263,6 @@ void AndroidAutoEntity::ping()
 
         aasdk::proto::messages::PingRequest request;
         controlServiceChannel_->sendPingRequest(request, std::move(promise));
-
         this->ping();
     },
     [this, self = this->shared_from_this()]() {

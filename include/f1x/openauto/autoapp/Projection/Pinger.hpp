@@ -29,7 +29,7 @@ namespace autoapp
 namespace projection
 {
 
-class Pinger: public IPinger, std::enable_shared_from_this<Pinger>
+class Pinger: public IPinger, public std::enable_shared_from_this<Pinger>
 {
 public:
     Pinger(boost::asio::io_service& ioService, time_t duration);
