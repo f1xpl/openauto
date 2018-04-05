@@ -35,12 +35,14 @@ AndroidAutoEntity::AndroidAutoEntity(boost::asio::io_service& ioService,
                                      aasdk::messenger::ICryptor::Pointer cryptor,
                                      aasdk::transport::ITransport::Pointer transport,
                                      configuration::IConfiguration::Pointer configuration,
-                                     IServiceFactory& serviceFactory)
+                                     IServiceFactory& serviceFactory,
+                                     IPinger::Pointer pinger)
     : strand_(ioService)
     , cryptor_(std::move(cryptor))
     , transport_(std::move(transport))
     , configuration_(std::move(configuration))
     , serviceFactory_(serviceFactory)
+    , pinger_(std::move(pinger))
     , messenger_(std::make_shared<aasdk::messenger::Messenger>(ioService,
                                                                std::make_shared<aasdk::messenger::MessageInStream>(ioService, transport_, cryptor_),
                                                                std::make_shared<aasdk::messenger::MessageOutStream>(ioService, transport_, cryptor_)))
@@ -178,6 +180,8 @@ void AndroidAutoEntity::onServiceDiscoveryRequest(const aasdk::proto::messages::
     promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
     controlServiceChannel_->sendServiceDiscoveryResponse(serviceDiscoveryResponse, std::move(promise));
     controlServiceChannel_->receive(this->shared_from_this());
+
+    this->ping();
 }
 
 void AndroidAutoEntity::onAudioFocusRequest(const aasdk::proto::messages::AudioFocusRequest& request)
@@ -205,10 +209,8 @@ void AndroidAutoEntity::onShutdownRequest(const aasdk::proto::messages::Shutdown
 
     aasdk::proto::messages::ShutdownResponse response;
     auto promise = aasdk::channel::SendPromise::defer(strand_);
-    promise->then([this, self = this->shared_from_this()]() {
-            this->triggerQuit();
-        },
-        std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
+    promise->then(std::bind(&AndroidAutoEntity::triggerQuit, this->shared_from_this()),
+                  std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
     controlServiceChannel_->sendShutdownResponse(response, std::move(promise));
     controlServiceChannel_->receive(this->shared_from_this());
@@ -233,6 +235,14 @@ void AndroidAutoEntity::onNavigationFocusRequest(const aasdk::proto::messages::N
     controlServiceChannel_->receive(this->shared_from_this());
 }
 
+void AndroidAutoEntity::onPingResponse(const aasdk::proto::messages::PingResponse&)
+{
+    OPENAUTO_LOG(info) << "[AndroidAutoEntity] ping response";
+
+    pinger_->pong();
+    controlServiceChannel_->receive(this->shared_from_this());
+}
+
 void AndroidAutoEntity::onChannelError(const aasdk::error::Error& e)
 {
     OPENAUTO_LOG(error) << "[AndroidAutoEntity] channel error: " << e.what();
@@ -245,6 +255,26 @@ void AndroidAutoEntity::triggerQuit()
     {
         eventHandler_->onAndroidAutoQuit();
     }
+}
+
+void AndroidAutoEntity::ping()
+{
+    auto promise = IPinger::Promise::defer(strand_);
+    promise->then([this, self = this->shared_from_this()]() {
+        auto promise = aasdk::channel::SendPromise::defer(strand_);
+        promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
+
+        aasdk::proto::messages::PingRequest request;
+        controlServiceChannel_->sendPingRequest(request, std::move(promise));
+
+        this->ping();
+    },
+    [this, self = this->shared_from_this()]() {
+        OPENAUTO_LOG(error) << "[AndroidAutoEntity] ping timer exceeded.";
+        this->triggerQuit();
+    });
+
+    pinger_->ping(std::move(promise));
 }
 
 }
