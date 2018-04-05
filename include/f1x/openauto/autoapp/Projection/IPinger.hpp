@@ -33,7 +33,7 @@ class IPinger
 {
 public:
     typedef std::shared_ptr<IPinger> Pointer;
-    typedef aasdk::io::Promise<void, void> Promise;
+    typedef aasdk::io::Promise<void> Promise;
 
     virtual ~IPinger() = default;
     virtual void ping(Promise::Pointer promise) = 0;

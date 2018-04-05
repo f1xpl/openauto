@@ -60,17 +60,18 @@ void AndroidAutoEntity::start(IAndroidAutoEntityEventHandler& eventHandler)
 {
     strand_.dispatch([this, self = this->shared_from_this(), eventHandler = &eventHandler]() {
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] start.";
-        eventHandler_ = eventHandler;
 
         cryptor_->init();
 
         serviceList_ = serviceFactory_.create(messenger_);
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::start, std::placeholders::_1));
+        this->ping();
 
-        controlServiceChannel_->receive(this->shared_from_this());
         auto versionRequestPromise = aasdk::channel::SendPromise::defer(strand_);
         versionRequestPromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
         controlServiceChannel_->sendVersionRequest(std::move(versionRequestPromise));
+        eventHandler_ = eventHandler;
+        controlServiceChannel_->receive(this->shared_from_this());
     });
 }
 
@@ -79,12 +80,12 @@ void AndroidAutoEntity::stop()
     strand_.dispatch([this, self = this->shared_from_this()]() {
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] stop.";
 
+        eventHandler_ = nullptr;
         pinger_->cancel();
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::stop, std::placeholders::_1));
         messenger_->stop();
         cryptor_->deinit();
         transport_->stop();
-        eventHandler_ = nullptr;
     });
 }
 
@@ -145,7 +146,6 @@ void AndroidAutoEntity::onHandshake(const aasdk::common::DataConstBuffer& payloa
             auto authCompletePromise = aasdk::channel::SendPromise::defer(strand_);
             authCompletePromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
             controlServiceChannel_->sendAuthComplete(authCompleteIndication, std::move(authCompletePromise));
-            this->ping();
         }
 
         controlServiceChannel_->receive(this->shared_from_this());
@@ -212,7 +212,6 @@ void AndroidAutoEntity::onShutdownRequest(const aasdk::proto::messages::Shutdown
                   std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
     controlServiceChannel_->sendShutdownResponse(response, std::move(promise));
-    controlServiceChannel_->receive(this->shared_from_this());
 }
 
 void AndroidAutoEntity::onShutdownResponse(const aasdk::proto::messages::ShutdownResponse&)
@@ -265,9 +264,13 @@ void AndroidAutoEntity::ping()
         controlServiceChannel_->sendPingRequest(request, std::move(promise));
         this->ping();
     },
-    [this, self = this->shared_from_this()]() {
-        OPENAUTO_LOG(error) << "[AndroidAutoEntity] ping timer exceeded.";
-        this->triggerQuit();
+    [this, self = this->shared_from_this()](auto error) {
+        if(error != aasdk::error::ErrorCode::OPERATION_ABORTED &&
+           error != aasdk::error::ErrorCode::OPERATION_IN_PROGRESS)
+        {
+            OPENAUTO_LOG(error) << "[AndroidAutoEntity] ping timer exceeded.";
+            this->triggerQuit();
+        }
     });
 
     pinger_->ping(std::move(promise));

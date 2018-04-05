@@ -46,6 +46,7 @@ private:
     boost::asio::io_service::strand strand_;
     boost::asio::deadline_timer timer_;
     time_t duration_;
+    bool cancelled_;
     Promise::Pointer promise_;
     int64_t pingsCount_;
     int64_t pongsCount_;
