@@ -34,7 +34,7 @@ AndroidAutoEntity::AndroidAutoEntity(boost::asio::io_service& ioService,
                                      aasdk::transport::ITransport::Pointer transport,
                                      aasdk::messenger::IMessenger::Pointer messenger,
                                      configuration::IConfiguration::Pointer configuration,
-                                     IServiceFactory& serviceFactory,
+                                     ServiceList serviceList,
                                      IPinger::Pointer pinger)
     : strand_(ioService)
     , cryptor_(std::move(cryptor))
@@ -42,7 +42,7 @@ AndroidAutoEntity::AndroidAutoEntity(boost::asio::io_service& ioService,
     , messenger_(std::move(messenger))
     , controlServiceChannel_(std::make_shared<aasdk::channel::control::ControlServiceChannel>(strand_, messenger_))
     , configuration_(std::move(configuration))
-    , serviceFactory_(serviceFactory)
+    , serviceList_(std::move(serviceList))
     , pinger_(std::move(pinger))
     , eventHandler_(nullptr)
 {
@@ -58,16 +58,13 @@ void AndroidAutoEntity::start(IAndroidAutoEntityEventHandler& eventHandler)
     strand_.dispatch([this, self = this->shared_from_this(), eventHandler = &eventHandler]() {
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] start.";
 
-        cryptor_->init();
-
-        serviceList_ = serviceFactory_.create(messenger_);
+        eventHandler_ = eventHandler;
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::start, std::placeholders::_1));
         this->schedulePing();
 
         auto versionRequestPromise = aasdk::channel::SendPromise::defer(strand_);
         versionRequestPromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
         controlServiceChannel_->sendVersionRequest(std::move(versionRequestPromise));
-        eventHandler_ = eventHandler;
         controlServiceChannel_->receive(this->shared_from_this());
     });
 }
@@ -78,11 +75,11 @@ void AndroidAutoEntity::stop()
         OPENAUTO_LOG(info) << "[AndroidAutoEntity] stop.";
 
         eventHandler_ = nullptr;
-        pinger_->cancel();
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::stop, std::placeholders::_1));
+        pinger_->cancel();
         messenger_->stop();
-        cryptor_->deinit();
         transport_->stop();
+        cryptor_->deinit();
     });
 }
 

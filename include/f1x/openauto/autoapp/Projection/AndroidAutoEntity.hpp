@@ -25,7 +25,7 @@
 #include <f1x/aasdk/Channel/AV/VideoServiceChannel.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Projection/IAndroidAutoEntity.hpp>
-#include <f1x/openauto/autoapp/Projection/IServiceFactory.hpp>
+#include <f1x/openauto/autoapp/Projection/IService.hpp>
 #include <f1x/openauto/autoapp/Projection/IPinger.hpp>
 
 namespace f1x
@@ -45,7 +45,7 @@ public:
                       aasdk::transport::ITransport::Pointer transport,
                       aasdk::messenger::IMessenger::Pointer messenger,
                       configuration::IConfiguration::Pointer configuration,
-                      IServiceFactory& serviceFactory,
+                      ServiceList serviceList,
                       IPinger::Pointer pinger);
     ~AndroidAutoEntity() override;
 
@@ -73,9 +73,8 @@ private:
     aasdk::messenger::IMessenger::Pointer messenger_;
     aasdk::channel::control::IControlServiceChannel::Pointer controlServiceChannel_;
     configuration::IConfiguration::Pointer configuration_;
-    IServiceFactory& serviceFactory_;
-    IPinger::Pointer pinger_;
     ServiceList serviceList_;
+    IPinger::Pointer pinger_;
     IAndroidAutoEntityEventHandler* eventHandler_;
 };
 

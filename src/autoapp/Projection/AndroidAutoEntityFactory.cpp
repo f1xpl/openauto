@@ -63,11 +63,15 @@ IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::transport::I
 {
     auto sslWrapper(std::make_shared<aasdk::transport::SSLWrapper>());
     auto cryptor(std::make_shared<aasdk::messenger::Cryptor>(std::move(sslWrapper)));
+    cryptor->init();
+
     auto messenger(std::make_shared<aasdk::messenger::Messenger>(ioService_,
                                                                  std::make_shared<aasdk::messenger::MessageInStream>(ioService_, transport, cryptor),
                                                                  std::make_shared<aasdk::messenger::MessageOutStream>(ioService_, transport, cryptor)));
+
+    auto serviceList = serviceFactory_.create(messenger);
     auto pinger(std::make_shared<Pinger>(ioService_, 5000));
-    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), std::move(messenger), configuration_, serviceFactory_, std::move(pinger));
+    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), std::move(messenger), configuration_, std::move(serviceList), std::move(pinger));
 }
 
 }
