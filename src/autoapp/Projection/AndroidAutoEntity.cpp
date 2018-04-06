@@ -16,9 +16,7 @@
 *  along with openauto. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <f1x/aasdk/Messenger/MessageInStream.hpp>
-#include <f1x/aasdk/Messenger/MessageOutStream.hpp>
-#include <f1x/aasdk/Messenger/Messenger.hpp>
+#include <f1x/aasdk/Channel/Control/ControlServiceChannel.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntity.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
@@ -34,19 +32,18 @@ namespace projection
 AndroidAutoEntity::AndroidAutoEntity(boost::asio::io_service& ioService,
                                      aasdk::messenger::ICryptor::Pointer cryptor,
                                      aasdk::transport::ITransport::Pointer transport,
+                                     aasdk::messenger::IMessenger::Pointer messenger,
                                      configuration::IConfiguration::Pointer configuration,
                                      IServiceFactory& serviceFactory,
                                      IPinger::Pointer pinger)
     : strand_(ioService)
     , cryptor_(std::move(cryptor))
     , transport_(std::move(transport))
+    , messenger_(std::move(messenger))
+    , controlServiceChannel_(std::make_shared<aasdk::channel::control::ControlServiceChannel>(strand_, messenger_))
     , configuration_(std::move(configuration))
     , serviceFactory_(serviceFactory)
     , pinger_(std::move(pinger))
-    , messenger_(std::make_shared<aasdk::messenger::Messenger>(ioService,
-                                                               std::make_shared<aasdk::messenger::MessageInStream>(ioService, transport_, cryptor_),
-                                                               std::make_shared<aasdk::messenger::MessageOutStream>(ioService, transport_, cryptor_)))
-    , controlServiceChannel_(std::make_shared<aasdk::channel::control::ControlServiceChannel>(strand_, messenger_))
     , eventHandler_(nullptr)
 {
 }

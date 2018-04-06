@@ -21,6 +21,9 @@
 #include <f1x/aasdk/Transport/USBTransport.hpp>
 #include <f1x/aasdk/Transport/TCPTransport.hpp>
 #include <f1x/aasdk/Messenger/Cryptor.hpp>
+#include <f1x/aasdk/Messenger/MessageInStream.hpp>
+#include <f1x/aasdk/Messenger/MessageOutStream.hpp>
+#include <f1x/aasdk/Messenger/Messenger.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Projection/AndroidAutoEntity.hpp>
 #include <f1x/openauto/autoapp/Projection/Pinger.hpp>
@@ -60,9 +63,11 @@ IAndroidAutoEntity::Pointer AndroidAutoEntityFactory::create(aasdk::transport::I
 {
     auto sslWrapper(std::make_shared<aasdk::transport::SSLWrapper>());
     auto cryptor(std::make_shared<aasdk::messenger::Cryptor>(std::move(sslWrapper)));
+    auto messenger(std::make_shared<aasdk::messenger::Messenger>(ioService_,
+                                                                 std::make_shared<aasdk::messenger::MessageInStream>(ioService_, transport, cryptor),
+                                                                 std::make_shared<aasdk::messenger::MessageOutStream>(ioService_, transport, cryptor)));
     auto pinger(std::make_shared<Pinger>(ioService_, 5000));
-
-    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), configuration_, serviceFactory_, std::move(pinger));
+    return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport), std::move(messenger), configuration_, serviceFactory_, std::move(pinger));
 }
 
 }

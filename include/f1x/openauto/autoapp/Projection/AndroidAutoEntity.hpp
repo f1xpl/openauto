@@ -20,7 +20,7 @@
 
 #include <boost/asio.hpp>
 #include <f1x/aasdk/Transport/ITransport.hpp>
-#include <f1x/aasdk/Channel/Control/ControlServiceChannel.hpp>
+#include <f1x/aasdk/Channel/Control/IControlServiceChannel.hpp>
 #include <f1x/aasdk/Channel/Control/IControlServiceChannelEventHandler.hpp>
 #include <f1x/aasdk/Channel/AV/VideoServiceChannel.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
@@ -43,6 +43,7 @@ public:
     AndroidAutoEntity(boost::asio::io_service& ioService,
                       aasdk::messenger::ICryptor::Pointer cryptor,
                       aasdk::transport::ITransport::Pointer transport,
+                      aasdk::messenger::IMessenger::Pointer messenger,
                       configuration::IConfiguration::Pointer configuration,
                       IServiceFactory& serviceFactory,
                       IPinger::Pointer pinger);
@@ -69,11 +70,11 @@ private:
     boost::asio::io_service::strand strand_;
     aasdk::messenger::ICryptor::Pointer cryptor_;
     aasdk::transport::ITransport::Pointer transport_;
+    aasdk::messenger::IMessenger::Pointer messenger_;
+    aasdk::channel::control::IControlServiceChannel::Pointer controlServiceChannel_;
     configuration::IConfiguration::Pointer configuration_;
     IServiceFactory& serviceFactory_;
     IPinger::Pointer pinger_;
-    aasdk::messenger::IMessenger::Pointer messenger_;
-    aasdk::channel::control::ControlServiceChannel::Pointer controlServiceChannel_;
     ServiceList serviceList_;
     IAndroidAutoEntityEventHandler* eventHandler_;
 };
