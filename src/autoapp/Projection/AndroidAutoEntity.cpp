@@ -65,7 +65,7 @@ void AndroidAutoEntity::start(IAndroidAutoEntityEventHandler& eventHandler)
 
         serviceList_ = serviceFactory_.create(messenger_);
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::start, std::placeholders::_1));
-        this->ping();
+        this->schedulePing();
 
         auto versionRequestPromise = aasdk::channel::SendPromise::defer(strand_);
         versionRequestPromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
@@ -253,16 +253,12 @@ void AndroidAutoEntity::triggerQuit()
     }
 }
 
-void AndroidAutoEntity::ping()
+void AndroidAutoEntity::schedulePing()
 {
     auto promise = IPinger::Promise::defer(strand_);
     promise->then([this, self = this->shared_from_this()]() {
-        auto promise = aasdk::channel::SendPromise::defer(strand_);
-        promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
-
-        aasdk::proto::messages::PingRequest request;
-        controlServiceChannel_->sendPingRequest(request, std::move(promise));
-        this->ping();
+        this->sendPing();
+        this->schedulePing();
     },
     [this, self = this->shared_from_this()](auto error) {
         if(error != aasdk::error::ErrorCode::OPERATION_ABORTED &&
@@ -274,6 +270,15 @@ void AndroidAutoEntity::ping()
     });
 
     pinger_->ping(std::move(promise));
+}
+
+void AndroidAutoEntity::sendPing()
+{
+    auto promise = aasdk::channel::SendPromise::defer(strand_);
+    promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
+
+    aasdk::proto::messages::PingRequest request;
+    controlServiceChannel_->sendPingRequest(request, std::move(promise));
 }
 
 }
