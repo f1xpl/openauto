@@ -48,7 +48,6 @@ public:
 
 private:
     using std::enable_shared_from_this<App>::shared_from_this;
-
     void enumerateDevices();
     void waitForDevice();
     void aoapDeviceHandler(aasdk::usb::DeviceHandle deviceHandle);
