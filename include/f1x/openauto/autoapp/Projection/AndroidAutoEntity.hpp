@@ -63,7 +63,8 @@ public:
 private:
     using std::enable_shared_from_this<AndroidAutoEntity>::shared_from_this;
     void triggerQuit();
-    void ping();
+    void schedulePing();
+    void sendPing();
 
     boost::asio::io_service::strand strand_;
     aasdk::messenger::ICryptor::Pointer cryptor_;
