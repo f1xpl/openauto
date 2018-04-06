@@ -27,8 +27,8 @@
 #include <f1x/openauto/autoapp/App.hpp>
 #include <f1x/openauto/autoapp/Configuration/IConfiguration.hpp>
 #include <f1x/openauto/autoapp/Configuration/RecentAddressesList.hpp>
-#include <f1x/openauto/autoapp/Projection/AndroidAutoEntityFactory.hpp>
-#include <f1x/openauto/autoapp/Projection/ServiceFactory.hpp>
+#include <f1x/openauto/autoapp/Service/AndroidAutoEntityFactory.hpp>
+#include <f1x/openauto/autoapp/Service/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/UI/MainWindow.hpp>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
@@ -113,8 +113,8 @@ int main(int argc, char* argv[])
     aasdk::usb::USBWrapper usbWrapper(usbContext);
     aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
     aasdk::usb::AccessoryModeQueryChainFactory queryChainFactory(usbWrapper, ioService, queryFactory);
-    autoapp::projection::ServiceFactory serviceFactory(ioService, configuration);
-    autoapp::projection::AndroidAutoEntityFactory androidAutoEntityFactory(ioService, configuration, serviceFactory);
+    autoapp::service::ServiceFactory serviceFactory(ioService, configuration);
+    autoapp::service::AndroidAutoEntityFactory androidAutoEntityFactory(ioService, configuration, serviceFactory);
 
     auto usbHub(std::make_shared<aasdk::usb::USBHub>(usbWrapper, ioService, queryChainFactory));
     auto connectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
