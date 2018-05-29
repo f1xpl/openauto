@@ -4,6 +4,8 @@
 ### Support project
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R4HXE5ESDR4U4)
 
+If you are looking for the car power supply with ignition state detection (go to the Blue Wave Studio page)[https://bluewavestudio.io/index.php/bluewave-shop]
+
 For support of other platforms please contact me at f1xstudiopl@gmail.com
 
 ### Community
