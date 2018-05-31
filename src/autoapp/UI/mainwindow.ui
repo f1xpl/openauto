@@ -48,7 +48,7 @@ color: rgb(238, 238, 236);</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>370</y>
+      <y>330</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -67,7 +67,7 @@ color: rgb(238, 238, 236);</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>420</y>
+      <y>380</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -98,7 +98,7 @@ color: rgb(238, 238, 236);</string>
       <x>10</x>
       <y>440</y>
       <width>271</width>
-      <height>21</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -166,8 +166,8 @@ color: rgb(238, 238, 236);</string>
    <widget class="QLabel" name="labelCopyrightsInfoIcon">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>350</y>
+      <x>410</x>
+      <y>440</y>
       <width>21</width>
       <height>31</height>
      </rect>
@@ -179,9 +179,9 @@ color: rgb(238, 238, 236);</string>
    <widget class="QLabel" name="labelTrademark">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>350</y>
-      <width>361</width>
+      <x>440</x>
+      <y>440</y>
+      <width>351</width>
       <height>31</height>
      </rect>
     </property>
@@ -193,7 +193,7 @@ color: rgb(238, 238, 236);</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>270</y>
+      <y>230</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -212,7 +212,7 @@ color: rgb(238, 238, 236);</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>320</y>
+      <y>280</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -230,8 +230,8 @@ color: rgb(238, 238, 236);</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>380</y>
+      <x>50</x>
+      <y>370</y>
       <width>551</width>
       <height>61</height>
      </rect>
