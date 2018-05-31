@@ -166,8 +166,8 @@ color: rgb(238, 238, 236);</string>
    <widget class="QLabel" name="labelCopyrightsInfoIcon">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>400</y>
+      <x>230</x>
+      <y>340</y>
       <width>21</width>
       <height>31</height>
      </rect>
@@ -179,8 +179,8 @@ color: rgb(238, 238, 236);</string>
    <widget class="QLabel" name="labelTrademark">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>400</y>
+      <x>260</x>
+      <y>340</y>
       <width>361</width>
       <height>31</height>
      </rect>
@@ -225,6 +225,22 @@ color: rgb(238, 238, 236);</string>
     </property>
     <property name="default">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>370</y>
+      <width>551</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;If you are looking for 12V power supply with ignition switch compatible with Raspberry PI visit &lt;/span&gt;&lt;a href=&quot;https://bluewavestudio.io/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;https://bluewavestudio.io&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
