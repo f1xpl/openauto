@@ -4,5 +4,6 @@
         <file>ico_warning.png</file>
         <file>ico_setting.png</file>
         <file>ico_info.png</file>
+        <file>mainscreen.png</file>
     </qresource>
 </RCC>
