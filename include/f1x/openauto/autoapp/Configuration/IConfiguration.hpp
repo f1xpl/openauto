@@ -74,6 +74,10 @@ public:
     virtual std::string getBluetoothRemoteAdapterAddress() const = 0;
     virtual void setBluetoothRemoteAdapterAddress(const std::string& value) = 0;
 
+    virtual std::string getHeadUnitName() const = 0;
+    virtual std::string getHeadUnitManufacturer() const = 0;
+    virtual std::string getHeadUnitModel() const = 0;
+
     virtual bool musicAudioChannelEnabled() const = 0;
     virtual void setMusicAudioChannelEnabled(bool value) = 0;
     virtual bool speechAudioChannelEnabled() const = 0;

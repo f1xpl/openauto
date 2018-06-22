@@ -47,6 +47,10 @@ const std::string Configuration::cAudioOutputBackendType = "Audio.OutputBackendT
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
 
+const std::string Configuration::cHeadUnitNameKey = "OEM.HeadUnitName";
+const std::string Configuration::cHeadUnitManufacturerKey = "OEM.HeadUnitManufacturer";
+const std::string Configuration::cHeadUnitModelKey = "OEM.HeadUnitModel";
+
 const std::string Configuration::cInputEnableTouchscreenKey = "Input.EnableTouchscreen";
 const std::string Configuration::cInputPlayButtonKey = "Input.PlayButton";
 const std::string Configuration::cInputPauseButtonKey = "Input.PauseButton";
@@ -100,6 +104,10 @@ void Configuration::load()
 
         bluetoothRemoteAdapterAddress_ = iniConfig.get<std::string>(cBluetoothRemoteAdapterAddressKey, "");
 
+        headUnitName_ = iniConfig.get<std::string>(cHeadUnitNameKey, "OpenAuto");
+        headUnitManufacturer_ = iniConfig.get<std::string>(cHeadUnitManufacturerKey, "f1x");
+        headUnitModel_ = iniConfig.get<std::string>(cHeadUnitModelKey, "OpenAuto Autoapp");
+
         musicAudioChannelEnabled_ = iniConfig.get<bool>(cAudioMusicAudioChannelEnabled, true);
         speechAudiochannelEnabled_ = iniConfig.get<bool>(cAudioSpeechAudioChannelEnabled, true);
         audioOutputBackendType_ = static_cast<AudioOutputBackendType>(iniConfig.get<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(AudioOutputBackendType::RTAUDIO)));
@@ -126,6 +134,9 @@ void Configuration::reset()
     buttonCodes_.clear();
     bluetoothAdapterType_ = BluetoothAdapterType::NONE;
     bluetoothRemoteAdapterAddress_ = "";
+    headUnitName_ = "OpenAuto";
+    headUnitManufacturer_ = "f1x";
+    headUnitModel_ = "OpenAuto Autoapp";
     musicAudioChannelEnabled_ = true;
     speechAudiochannelEnabled_ = true;
     audioOutputBackendType_ = AudioOutputBackendType::RTAUDIO;
@@ -264,6 +275,21 @@ std::string Configuration::getBluetoothRemoteAdapterAddress() const
 void Configuration::setBluetoothRemoteAdapterAddress(const std::string& value)
 {
     bluetoothRemoteAdapterAddress_ = value;
+}
+
+std::string Configuration::getHeadUnitName() const
+{
+    return headUnitName_;
+}
+
+std::string Configuration::getHeadUnitManufacturer() const
+{
+    return headUnitManufacturer_;
+}
+
+std::string Configuration::getHeadUnitModel() const
+{
+    return headUnitModel_;
 }
 
 bool Configuration::musicAudioChannelEnabled() const

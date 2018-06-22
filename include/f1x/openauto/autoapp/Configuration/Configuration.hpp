@@ -65,6 +65,10 @@ public:
     std::string getBluetoothRemoteAdapterAddress() const override;
     void setBluetoothRemoteAdapterAddress(const std::string& value) override;
 
+    std::string getHeadUnitName() const override;
+    std::string getHeadUnitManufacturer() const override;
+    std::string getHeadUnitModel() const override;
+
     bool musicAudioChannelEnabled() const override;
     void setMusicAudioChannelEnabled(bool value) override;
     bool speechAudioChannelEnabled() const override;
@@ -88,11 +92,18 @@ private:
     ButtonCodes buttonCodes_;
     BluetoothAdapterType bluetoothAdapterType_;
     std::string bluetoothRemoteAdapterAddress_;
+    std::string headUnitName_;
+    std::string headUnitManufacturer_;
+    std::string headUnitModel_;
     bool musicAudioChannelEnabled_;
     bool speechAudiochannelEnabled_;
     AudioOutputBackendType audioOutputBackendType_;
 
     static const std::string cConfigFileName;
+
+    static const std::string cHeadUnitNameKey;
+    static const std::string cHeadUnitManufacturerKey;
+    static const std::string cHeadUnitModelKey;
 
     static const std::string cGeneralShowClockKey;
     static const std::string cGeneralHandednessOfTrafficTypeKey;
