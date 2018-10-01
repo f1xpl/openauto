@@ -71,9 +71,10 @@ void startIOServiceWorkers(boost::asio::io_service& ioService, ThreadPool& threa
 int main(int argc, char* argv[])
 {
     libusb_context* usbContext;
-    if(libusb_init(&usbContext) != 0)
+    int ret = libusb_init(&usbContext);
+    if(ret != 0)
     {
-        OPENAUTO_LOG(error) << "[OpenAuto] libusb init failed.";
+        OPENAUTO_LOG(error) << "[OpenAuto] libusb init failed. (" << ret << ")";
         return 1;
     }
 
