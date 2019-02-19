@@ -60,7 +60,8 @@ void AndroidAutoEntity::start(IAndroidAutoEntityEventHandler& eventHandler)
 
         eventHandler_ = eventHandler;
         std::for_each(serviceList_.begin(), serviceList_.end(), std::bind(&IService::start, std::placeholders::_1));
-        this->schedulePing();
+        // TOOD: uncoment when there's a better fix for https://github.com/f1xpl/openauto/issues/162
+        //this->schedulePing();
 
         auto versionRequestPromise = aasdk::channel::SendPromise::defer(strand_);
         versionRequestPromise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
