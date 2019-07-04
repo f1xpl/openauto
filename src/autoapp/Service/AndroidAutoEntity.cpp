@@ -272,6 +272,8 @@ void AndroidAutoEntity::sendPing()
     promise->then([]() {}, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
     aasdk::proto::messages::PingRequest request;
+    auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
+    request.set_timestamp(timestamp.count());
     controlServiceChannel_->sendPingRequest(request, std::move(promise));
 }
 
