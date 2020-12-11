@@ -19,6 +19,7 @@
 #include <QMessageBox>
 #include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
 #include "ui_settingswindow.h"
+#include <functional>
 
 namespace f1x
 {

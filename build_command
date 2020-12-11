@@ -1,0 +1,1 @@
+cmake -DAASDK_INCLUDE_DIRS=/home/ksp3kor/Study/aasdk/include/ -DAASDK_PROTO_INCLUDE_DIRS=/home/ksp3kor/Study/aasdk/build/ -DAASDK_LIBRARIES=/home/ksp3kor/Study/aasdk/lib/libaasdk.so -DAASDK_PROTO_LIBRARIES=/home/ksp3kor/Study/aasdk/lib/libaasdk_proto.so ..
